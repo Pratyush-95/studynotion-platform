@@ -3,13 +3,13 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, RecaptchaVerifier } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCrSSH45jJR86UzymNZVNbn_hXJJ1C75Tc",
-  authDomain: "studynotion-otp.firebaseapp.com",
-  projectId: "studynotion-otp",
-  storageBucket: "studynotion-otp.firebasestorage.app",
-  messagingSenderId: "813017608298",
-  appId: "1:813017608298:web:e0affc9b264c83f8b59a13",
-  measurementId: "G-G8TR3G7NW5",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
