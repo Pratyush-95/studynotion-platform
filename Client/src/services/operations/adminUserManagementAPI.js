@@ -72,6 +72,7 @@ export const viewUserProfile = async (token, userId) => {
     );
 
     result = response.data;
+    console.log("API Response:", response.data);
   } catch (error) {
     console.log(error);
 

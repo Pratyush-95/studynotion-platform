@@ -15,6 +15,8 @@ const {
   rejectCourse,
   getAdminDashboard,
   getRecentActivities,
+  deleteActivity,
+  markActivityAsRead
 } = require("../controllers/Admin");
 
 router.get(
@@ -92,5 +94,18 @@ router.get(
   auth,
   isAdmin,
   getRecentActivities
+);
+
+router.delete(
+  "/activity/:activityId",
+  auth,
+  deleteActivity
+);
+
+router.patch(
+  "/activity/:activityId/read",
+  auth,
+  isAdmin,
+  markActivityAsRead
 );
 module.exports = router;

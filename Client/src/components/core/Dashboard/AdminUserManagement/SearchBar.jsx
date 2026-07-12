@@ -17,23 +17,39 @@ const SearchBar = ({
         />
 
         <input
-          type="text"
-          placeholder="Search by Name, Email or User ID"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              onSearch();
-            }
-          }}
-          className="w-full rounded-3xl border border-richblack-700 bg-richblack-900 py-4 pl-12 pr-4 text-richblack-5 outline-none transition duration-200 focus:border-yellow-50 focus:ring-2 focus:ring-yellow-50/20"
-        />
+  type="text"
+  placeholder="Search by Name, Email or User ID"
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      onSearch();
+    }
+  }}
+  className="
+    h-14
+    w-full
+    rounded-xl
+    border
+    border-richblack-700
+    bg-richblack-900
+    pl-12
+    pr-5
+    text-base
+    text-richblack-5
+    outline-none
+    transition-all
+    focus:border-yellow-50
+    focus:ring-2
+    focus:ring-yellow-500/20
+  "
+/>
 
       </div>
 
       <button
         onClick={onSearch}
-        className="inline-flex items-center justify-center rounded-3xl bg-gradient-to-r from-yellow-50 to-yellow-200 px-8 py-4 text-sm font-semibold text-richblack-900 transition duration-200 hover:brightness-110"
+       className="h-14 min-w-[150px] rounded-xl bg-yellow-50 text-richblack-900 font-semibold transition-all hover:bg-yellow-100 "
       >
         Search
       </button>

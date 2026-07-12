@@ -6,9 +6,14 @@ import UserTable from "./UserTable";
 import Pagination from "./Pagination";
 import { useSelector } from "react-redux";
 import { searchUser, viewUserProfile, toggleUserStatus, sendNotification, deleteUser } from "../../../../services/operations/adminUserManagementAPI";
-import UserProfileModal from "./UserProfileModal";
-import NotificationModal from "./NotificationModal";
 import DeleteUserModal from "./DeleteUserModal";
+import {
+  FaUsers,
+  FaUserCheck,
+  FaUserSlash,
+  FaChalkboardTeacher,
+  FaUserGraduate,
+} from "react-icons/fa";
 
 const AdminUserManagement = () => {
 
@@ -42,6 +47,8 @@ const AdminUserManagement = () => {
   const blockedUsers = users.filter((user) => !user.active).length;
   const instructorCount = users.filter((user) => user.accountType === "Instructor").length;
   const studentCount = users.filter((user) => user.accountType === "Student").length;
+
+  
 
   // ======================================================
   // Search User
@@ -174,42 +181,154 @@ const handleDeleteUser = async (userId) => {
 
     <div className="w-full text-richblack-5">
 
-      <div className="rounded-xl border border-richblack-700 bg-gradient-to-br from-richblack-900 via-richblack-800 to-[#1b1c2b] p-8 shadow-[0_35px_80px_rgba(14,21,54,0.35)]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-yellow-50/70">
-              Premium Admin Console
-            </p>
-            <h1 className="text-4xl font-semibold text-richblack-5">
-              User Management
-            </h1>
-            <p className="mt-3 max-w-2xl text-richblack-300">
-              Manage every learner and instructor with clarity, speed, and high-end controls.
-            </p>
-          </div>
+     <div className="space-y-10">
+       {/* ================= HEADER ================= */}
 
-          <div className="grid w-full max-w-xl grid-cols-2 gap-4 sm:grid-cols-4">
-            <div className="rounded-xl bg-richblack-900/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-              <p className="text-sm text-richblack-400">Total users</p>
-              <p className="mt-2 text-3xl font-semibold text-yellow-50">{totalUsers}</p>
-            </div>
-            <div className="rounded-xl bg-richblack-900/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-              <p className="text-sm text-richblack-400">Active</p>
-              <p className="mt-2 text-3xl font-semibold text-emerald-300">{activeUsers}</p>
-            </div>
-            <div className="rounded-xl bg-richblack-900/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-              <p className="text-sm text-richblack-400">Blocked</p>
-              <p className="mt-2 text-3xl font-semibold text-red-400">{blockedUsers}</p>
-            </div>
-            <div className="rounded-xl bg-richblack-900/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
-              <p className="text-sm text-richblack-400">Instructors</p>
-              <p className="mt-2 text-3xl font-semibold text-sky-300">{instructorCount}</p>
-            </div>
-          </div>
-        </div>
+<div className="rounded-xl border border-richblack-700 bg-richblack-900 p-8">
 
-        <div className="mt-10 grid gap-6 items-start lg:grid-cols-[2fr_1fr]">
-          <div className="self-start rounded-xl border border-richblack-700 bg-richblack-950/70 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+<p className="text-sm uppercase tracking-[0.35em] text-yellow-50/70">
+Premium Admin Console
+</p>
+
+<h1 className="mt-4 text-5xl font-bold">
+User Management
+</h1>
+
+<p className="mt-5 text-lg text-richblack-300 max-w-3xl leading-8">
+Manage every learner and instructor with clarity,
+speed and high-end controls.
+</p>
+
+</div>
+
+{/* ================= STATS ================= */}
+
+<div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
+
+  {/* Total Users */}
+
+  <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-5 hover:border-cyan-400 transition-all">
+
+    <div className="flex items-center justify-between">
+
+      <div>
+
+        <p className="text-richblack-400">
+          Total Users
+        </p>
+
+        <h2 className="mt-2 text-3xl font-bold">
+          {totalUsers}
+        </h2>
+
+      </div>
+
+      <FaUsers className="text-4xl text-cyan-400"/>
+
+    </div>
+
+  </div>
+
+  {/* Active */}
+
+  <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-5 hover:border-green-400 transition-all">
+
+    <div className="flex items-center justify-between">
+
+      <div>
+
+        <p className="text-richblack-400">
+          Active
+        </p>
+
+        <h2 className="mt-2 text-3xl font-bold text-green-400">
+          {activeUsers}
+        </h2>
+
+      </div>
+
+      <FaUserCheck className="text-4xl text-green-400"/>
+
+    </div>
+
+  </div>
+
+  {/* Blocked */}
+
+  <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-5 hover:border-red-400 transition-all">
+
+    <div className="flex items-center justify-between">
+
+      <div>
+
+        <p className="text-richblack-400">
+          Blocked
+        </p>
+
+        <h2 className="mt-2 text-3xl font-bold text-red-400">
+          {blockedUsers}
+        </h2>
+
+      </div>
+
+      <FaUserSlash className="text-4xl text-red-400"/>
+
+    </div>
+
+  </div>
+
+  {/* Instructor */}
+
+  <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-5 hover:border-yellow-400 transition-all">
+
+    <div className="flex items-center justify-between">
+
+      <div>
+
+        <p className="text-richblack-400">
+          Instructors
+        </p>
+
+        <h2 className="mt-2 text-3xl font-bold text-yellow-400">
+          {instructorCount}
+        </h2>
+
+      </div>
+
+      <FaChalkboardTeacher className="text-4xl text-yellow-400"/>
+
+    </div>
+
+  </div>
+
+  {/* Student */}
+
+  <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-5 hover:border-pink-400 transition-all">
+
+    <div className="flex items-center justify-between">
+
+      <div>
+
+        <p className="text-richblack-400">
+          Students
+        </p>
+
+        <h2 className="mt-2 text-3xl font-bold text-pink-400">
+          {studentCount}
+        </h2>
+
+      </div>
+
+      <FaUserGraduate className="text-4xl text-pink-400"/>
+
+    </div>
+
+  </div>
+
+</div>
+
+        <div className="mt-10 flex gap-6">
+          <div className="flex-1 rounded-xl border border-richblack-700 bg-richblack-900 p-5">
             <SearchBar
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -217,12 +336,14 @@ const handleDeleteUser = async (userId) => {
             />
           </div>
 
-          <div className="self-start rounded-xl border border-richblack-700 bg-richblack-950/70 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
-            <h2 className="mb-4 text-sm uppercase tracking-[0.25em] text-yellow-50/70">
-              Filters
+          
+            <h2 className="mb-3 text-lg font-bold text-yellow-50">
             </h2>
-            <SearchFilters role={role} setRole={setRole} />
-          </div>
+            <div className="w-[320px]">
+              <SearchFilters role={role} setRole={setRole} />
+            </div>
+            
+          
         </div>
       </div>
 

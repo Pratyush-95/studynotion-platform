@@ -10,6 +10,8 @@ import {
   FaBookOpen,
   FaRupeeSign,
   FaClock,
+  FaTicketAlt,
+  FaBell,
 } from "react-icons/fa";
 import {
   Chart as ChartJS,
@@ -116,11 +118,28 @@ const cards = [
     color: "text-emerald-400",
   },
   {
-    title: "Pending Requests",
-    value: stats?.pendingInstructors || 0,
-    icon: <FaClock />,
-    color: "text-orange-400",
-  },
+  title: "Pending Instructor Requests",
+  value: stats?.pendingInstructors || 0,
+  icon: <FaClock />,
+  color: "text-yellow-50",
+  link: "/dashboard/pending-instructors",
+},
+
+{
+  title: "Approved Instructors",
+  value: stats?.approvedInstructors || 0,
+  icon: <FaChalkboardTeacher />,
+  color: "text-caribbeangreen-100",
+  link: "/dashboard/approved-instructors",
+},
+
+{
+  title: "Rejected Instructors",
+  value: stats?.rejectedInstructors || 0,
+  icon: <FaChalkboardTeacher />,
+  color: "text-pink-200",
+  link: "/dashboard/rejected-instructors",
+},
 ];
 
 const months = [
@@ -178,10 +197,11 @@ const chartData = {
 
         {
           cards.map((item, index) => (
-            <div
-              key={index}
-              className="rounded-xl border border-richblack-700 bg-richblack-900 p-6 transition duration-300 hover:-translate-y-1 hover:border-yellow-50"
-            >
+          <Link
+          key={index}
+          to={item.link || "#"}
+          className="rounded-xl border border-richblack-700 bg-richblack-900 p-6 transition duration-300 hover:-translate-y-1 hover:border-yellow-50 hover:bg-richblack-800 cursor-pointer"
+          >
 
               <div className="flex items-center justify-between">
 
@@ -203,7 +223,7 @@ const chartData = {
 
               </div>
 
-            </div>
+            </Link>
           ))
         }
 
@@ -267,63 +287,87 @@ const chartData = {
         </div>
 
       </div>
-
       <div className="grid gap-6 lg:grid-cols-2">
+        <RecentActivities activities={activities} />
 
-  <RecentActivities activities={activities} />
+         <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-6">
 
-  <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-6">
+  <h2 className="text-2xl font-bold text-yellow-50">
+    📊 Recent Statistics
+  </h2>
 
-    <h2 className="text-xl font-semibold text-yellow-50">
-      Platform Overview
-    </h2>
+  <div className="mt-6 space-y-5">
 
-    <div className="mt-6 space-y-4">
-
-      <div className="flex justify-between">
-        <span className="text-richblack-300">Pending Instructors</span>
-        <span className="text-yellow-50 font-semibold">
-          {stats?.pendingInstructors}
-        </span>
+    <div className="flex items-center justify-between rounded-lg bg-richblack-800 px-4 py-3 transition hover:bg-richblack-700">
+      <div className="flex items-center gap-3">
+        <FaClock className="text-caribbeangreen-100 text-xl" />
+        <span className="text-richblack-100">Today's Activities</span>
       </div>
+      <span className="text-xl font-bold text-caribbeangreen-100">
+        {activities.length}
+      </span>
+    </div>
 
-      <div className="flex justify-between">
-        <span className="text-richblack-300">Approved Instructors</span>
-        <span className="text-green-400 font-semibold">
-          {stats?.approvedInstructors}
-        </span>
+    <div className="flex items-center justify-between rounded-lg bg-richblack-800 px-4 py-3 transition hover:bg-richblack-700">
+      <div className="flex items-center gap-3">
+        <FaUsers className="text-caribbeangreen-100 text-xl" />
+        <span className="text-richblack-100">Active Users</span>
       </div>
+      <span className="text-xl font-bold text-blue-200">
+        {stats?.totalUsers || 0}
+      </span>
+    </div>
 
-      <div className="flex justify-between">
-        <span className="text-richblack-300">Rejected Instructors</span>
-        <span className="text-red-400 font-semibold">
-          {stats?.rejectedInstructors}
-        </span>
+    <div className="flex items-center justify-between rounded-lg bg-richblack-800 px-4 py-3 transition hover:bg-richblack-700">
+      <div className="flex items-center gap-3">
+        <FaRupeeSign className="text-yellow-300 text-xl" />
+        <span className="text-richblack-100">Today's Revenue</span>
       </div>
+      <span className="text-xl font-bold text-yellow-300">
+        ₹{stats?.totalRevenue || 0}
+      </span>
+    </div>
 
-      <div className="flex justify-between">
-        <span className="text-richblack-300">Published Courses</span>
-        <span className="text-green-400 font-semibold">
-          {stats?.publishedCourses}
-        </span>
+    <div className="flex items-center justify-between rounded-lg bg-richblack-800 px-4 py-3 transition hover:bg-richblack-700">
+      <div className="flex items-center gap-3">
+        <FaBookOpen className="text-pink-400 text-xl" />
+        <span className="text-richblack-100">Courses Published</span>
       </div>
+      <span className="text-xl font-bold text-pink-400">
+        {stats?.publishedCourses || 0}
+      </span>
+    </div>
 
-      <div className="flex justify-between">
-        <span className="text-richblack-300">Pending Courses</span>
-        <span className="text-yellow-400 font-semibold">
-          {stats?.pendingCourses}
-        </span>
+    <hr className="border-richblack-700" />
+
+    <div className="flex items-center justify-between rounded-lg bg-richblack-800 px-4 py-3 transition hover:bg-richblack-700">
+      <div className="flex items-center gap-3">
+        <FaTicketAlt className="text-caribbeangreen-100 text-xl" />
+        <span className="text-richblack-100">Open Support Tickets</span>
       </div>
+      <span className="text-xl font-bold text-brown-50">
+        {stats?.openSupportTickets || 0}
+      </span>
+    </div>
 
+    <div className="flex items-center justify-between rounded-lg bg-richblack-800 px-4 py-3 transition hover:bg-richblack-700">
+      <div className="flex items-center gap-3">
+        <FaBell className="text-caribbeangreen-100 text-xl" />
+        <span className="text-richblack-100">Unread Notifications</span>      </div>
+      <span className="text-xl font-bold text-yellow-50">
+        {stats?.unreadNotifications || 0}
+      </span>
     </div>
 
   </div>
 
 </div>
 
+    </div>
+
       {/* Quick Actions */}
 
-      <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-6">
+      {/* <div className="rounded-xl border border-richblack-700 bg-richblack-900 p-6">
 
         <h2 className="mb-6 text-xl font-semibold text-yellow-50">
           Quick Actions
@@ -345,7 +389,7 @@ const chartData = {
 
         </div>
 
-      </div>
+      </div> */}
 
     </div>
   );

@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import {
   FiBell,
-  FiEdit3,
   FiCheckCircle,
   FiXCircle,
   FiBook,
   FiDollarSign,
   FiMessageSquare,
 } from "react-icons/fi";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 
 
 
@@ -33,7 +33,9 @@ const getActivityIcon = (activity) => {
         return <FiXCircle className="text-2xl text-pink-200" />;
 
       case "PROFILE_UPDATED":
-         return <FiEdit3 className="text-2xl text-richblue-100" />;
+         return (
+    <HiOutlinePencilSquare className="text-[26px] text-richblue-100" />
+  );
 
       default:
         return <FiBell className="text-2xl text-yellow-50" />;
@@ -66,7 +68,7 @@ const RecentActivities = ({ activities }) => {
         </p>
       ) : (
         <div className="space-y-3 overflow-y-auto pr-2 flex-1">
-          {activities.slice(0, 3).map((activity, index) => (
+          {activities.slice(0, 4).map((activity, index) => (
             <div
               key={index}
               className="group rounded-2xl border border-richblack-700 bg-gradient-to-r from-richblack-800 to-richblack-900 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-yellow-50 hover:shadow-lg hover:shadow-yellow-500/10"

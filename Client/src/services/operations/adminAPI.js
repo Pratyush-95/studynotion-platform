@@ -1,5 +1,11 @@
 import { apiConnector } from "../apiconnector";
 import { toast } from "react-hot-toast";
+import { adminActivityEndpoints } from "../apis";
+const {
+  GET_RECENT_ACTIVITIES_API,
+  DELETE_ACTIVITY_API,
+  MARK_ACTIVITY_READ_API,
+} = adminActivityEndpoints;
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
@@ -176,3 +182,51 @@ export const getRecentActivities = async (token) => {
 };
 
 
+export const deleteActivity = async (token, activityId, type) => {
+  let result = false;
+
+  try {
+
+    const response = await apiConnector(
+      "DELETE",
+      `${BASE_URL}/admin/activity/${activityId}?type=${type}`,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    result = response?.data?.success;
+
+    toast.success("Activity Deleted");
+
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error("Failed to delete activity");
+
+  }
+
+  return result;
+};
+
+
+
+export async function markActivityAsRead(token, activityId) {
+  try {
+    const response = await apiConnector(
+      "PATCH",
+          `${MARK_ACTIVITY_READ_API}/${activityId}/read`,
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

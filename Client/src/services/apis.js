@@ -150,3 +150,19 @@ export const adminUserManagementEndpoints = {
     BASE_URL + "/admin-user/delete-user",
 
 };
+
+
+// ========================================
+// Admin Activity
+// ========================================
+
+export const adminActivityEndpoints = {
+  GET_RECENT_ACTIVITIES_API:
+    BASE_URL + "/admin/recent-activities",
+
+  DELETE_ACTIVITY_API:
+    BASE_URL + "/admin/activity",
+
+  MARK_ACTIVITY_READ_API:
+    BASE_URL + "/admin/activity",
+};

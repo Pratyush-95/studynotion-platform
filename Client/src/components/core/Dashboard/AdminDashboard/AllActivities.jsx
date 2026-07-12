@@ -13,6 +13,7 @@ import {
 import { getRecentActivities } from "../../../../services/operations/adminAPI";
 
 
+
 const AllActivities = () => {
   const { token } = useSelector((state) => state.auth);
 
@@ -20,6 +21,10 @@ const AllActivities = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const fetchActivities = useCallback(async () => {
     if (!token) {
@@ -54,15 +59,49 @@ const AllActivities = () => {
       const type = activity?.type ?? "";
 
       const matchesSearch =
-        !searchTerm ||
-        title.toLowerCase().includes(searchTerm) ||
-        message.toLowerCase().includes(searchTerm);
+  !searchTerm ||
+  title.toLowerCase().includes(searchTerm) ||
+  message.toLowerCase().includes(searchTerm);
 
-      if (filter === "All") return matchesSearch;
+  const activityDate = new Date(activity.createdAt).getTime();
 
-      return matchesSearch && type.toLowerCase() === filter.toLowerCase();
-    });
-  }, [activities, search, filter]);
+let matchesDate = true;
+
+if (startDate && !endDate) {
+  // Sirf ek date select hui
+  const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(startDate);
+  end.setHours(23, 59, 59, 999);
+
+  matchesDate =
+    activityDate >= start.getTime() &&
+    activityDate <= end.getTime();
+} else if (startDate && endDate) {
+  // Date range select hui
+  const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+
+  matchesDate =
+    activityDate >= start.getTime() &&
+    activityDate <= end.getTime();
+}
+
+if (filter === "All") {
+  return matchesSearch && matchesDate;
+}
+
+return (
+  matchesSearch &&
+  matchesDate &&
+  type.toLowerCase() === filter.toLowerCase()
+);
+  });
+  }, [activities, search, filter, startDate, endDate]);
 
   const stats = useMemo(() => {
   return {
@@ -91,7 +130,11 @@ const AllActivities = () => {
     <div className="space-y-6">
     <ActivityHeader
     activityCount={activityCountLabel}
-    />
+    startDate={startDate}
+    endDate={endDate}
+    setStartDate={setStartDate}
+    setEndDate={setEndDate}
+  />
 
       <ActivitySearch
       search={search}
@@ -114,18 +157,29 @@ const AllActivities = () => {
       {loading ? (
         <p className="text-richblack-300">Loading...</p>
       ) : (
-        <div className="space-y-4">
+        <div className="relative space-y-4">
           {filteredActivities.length === 0 ? (
             <div className="rounded-xl border border-richblack-700 bg-richblack-900 py-16 text-center text-richblack-400">
               No activities found.
             </div>
           ) : (
              filteredActivities.map((activity, index) => (
-             <ActivityCard
-             key={activity?._id || activity?.id || index}
-             activity={activity}
-            />
-          ))
+
+              <ActivityCard
+  key={activity?._id || activity?.id || index}
+  activity={activity}
+  token={token}
+  onStatusChange={(activityId) => {
+    setActivities((prev) =>
+      prev.map((item) =>
+        item._id === activityId
+          ? { ...item, isRead: true}
+          : item
+      )
+    );
+  }}
+/>
+            ))
           )}
         </div>
       )}

@@ -250,6 +250,10 @@ let statistics = {};
 
 let courses = [];
 
+let orders = [];
+let notifications = [];
+let supportTickets = [];
+
 if (user.accountType === "Instructor") {
 
   // Get All Instructor Courses

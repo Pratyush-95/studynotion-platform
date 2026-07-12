@@ -8,10 +8,5 @@
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
-  "dependencies": {
-    "@ramonak/react-progress-bar": "^5.4.0",
-    "chart.js": "^4.5.1",
-    "react-chartjs-2": "^5.3.1",
-    "video-react": "^0.16.0"
-  }
+  "dependencies": {}
 }

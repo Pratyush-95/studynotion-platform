@@ -1,4 +1,3 @@
-
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
@@ -42,8 +41,11 @@ import ApprovedInstructors from "./components/core/Dashboard/AdminDashboard/Appr
 import RejectedInstructors from "./components/core/Dashboard/AdminDashboard/RejectedInstructors";
 import AllActivities from "./components/core/Dashboard/AdminDashboard/AllActivities";
 import AdminUserManagement from "./components/core/Dashboard/AdminUserManagement/AdminUserManagement";
+import "react-datepicker/dist/react-datepicker.css";
 // ✅ API
 import { getUserDetails } from "./services/operations/profileAPI";
+import InstructorProfilePage from "./components/core/Dashboard/AdminUserManagement/InstructorProfilePage";
+import StudentProfilePage from "./components/core/Dashboard/AdminUserManagement/StudentProfilePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -157,6 +159,8 @@ function App() {
             <Route path="dashboard/approved-instructors" element={<ApprovedInstructors />} />
             <Route path="dashboard/rejected-instructors" element={<RejectedInstructors />} />
             <Route path="dashboard/user-management" element={<AdminUserManagement />} />
+            <Route path="dashboard/user-management/instructor/:userId" element={<InstructorProfilePage />}/>
+            <Route path="dashboard/user-management/student/:userId" element={<StudentProfilePage />}/>
             <Route path="dashboard/all-activities" element={<AllActivities />} />
           </>
         </Route>

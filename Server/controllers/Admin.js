@@ -6,6 +6,7 @@ const Notification = require("../models/Notification");
 //const RecentActivity = require("../models/RecentActivity");
 const SupportTicket = require("../models/SupportTicket");
 
+
 // Get all pending instructors
 exports.getPendingInstructors = async (req, res) => {
   try {
@@ -423,6 +424,10 @@ exports.getRecentActivities = async (req, res) => {
 
         Course.find()
           .populate("instructor", "firstName lastName accountType email image")
+          .populate(
+            "category",
+            "name"
+          )
           .sort({ createdAt: -1 })
           .limit(10),
 
@@ -446,12 +451,18 @@ exports.getRecentActivities = async (req, res) => {
 
       recentCourses.forEach(course => {
         activities.push({
+          _id: course._id,
           type: "COURSE",
           title: course.courseName,
           message: "New Course Created",
           performedBy: course.instructor,
           status: course.status,
           createdAt: course.createdAt,
+           courseName: course.courseName,
+           price: course.price,
+           category: course.category?.name,
+           students: course.studentsEnrolled?.length || 0,
+           instructor:`${course.instructor?.firstName || ""} ${course.instructor?.lastName || ""}`,
         });
       });
 
@@ -463,6 +474,7 @@ exports.getRecentActivities = async (req, res) => {
             .join(", ");
 
           activities.push({
+            _id: order._id,
             type: "PAYMENT",
             title: "Payment Received",
             message: `${order.userId?.firstName || "Unknown"} purchased ${courseNames}`,
@@ -470,12 +482,16 @@ exports.getRecentActivities = async (req, res) => {
             amount: order.amount,
             status: "SUCCESS",
             createdAt: order.createdAt,
+            courseName: courseNames,
+            orderId: order._id,
+            paymentDate: order.createdAt,
           });
 
       });
 
       recentTickets.forEach(ticket => {
         activities.push({
+          _id: ticket._id,
           type: "SUPPORT",
           title: ticket.category,
           message: `${ticket.createdBy?.firstName || "Unknown"} raised a ticket`,
@@ -518,6 +534,7 @@ else if (
 }
 
   activities.push({
+    _id: notification._id,
     type: "NOTIFICATION",
     subType,
     title: notification.title || "Notification",
@@ -592,6 +609,7 @@ else if (
             .join(", ");
 
         activities.push({
+           _id: order._id,
           type: "PAYMENT",
           title: "Payment Received",
           message: `${order.userId?.firstName || "Unknown"} purchased ${courseNames}`,
@@ -599,6 +617,9 @@ else if (
           amount: order.amount,
           status: "SUCCESS",
           createdAt: order.createdAt,
+          courseName: courseNames,
+          orderId: order._id,
+          paymentDate: order.createdAt,
         });
 
       });
@@ -636,6 +657,7 @@ else if (
 }
 
   activities.push({
+    _id: notification._id,
     type: "NOTIFICATION",
     subType,
     title: notification.title || "Notification",
@@ -656,6 +678,7 @@ else if (
       instructorTickets.forEach(ticket => {
 
         activities.push({
+          _id: ticket._id,
           type: "SUPPORT",
           title: ticket.category,
           message: ticket.subject,
@@ -714,6 +737,7 @@ else if (
             .join(", ");
 
         activities.push({
+          _id: order._id,
           type: "PAYMENT",
           title: "Payment Successful",
           message: `Purchased ${courseNames}`,
@@ -721,6 +745,9 @@ else if (
           amount: order.amount,
           status: "SUCCESS",
           createdAt: order.createdAt,
+          courseName: courseNames,
+          orderId: order._id,
+          paymentDate: order.createdAt,
         });
 
       });
@@ -759,6 +786,7 @@ else if (
   
   
   activities.push({
+    _id: notification._id,
     type: "NOTIFICATION",
     subType,
     title: notification.title || "Notification",
@@ -779,6 +807,7 @@ else if (
       studentTickets.forEach(ticket => {
 
         activities.push({
+            _id: ticket._id,
           type: "SUPPORT",
           title: ticket.category,
           message: ticket.subject,
@@ -879,6 +908,76 @@ exports.getAdminDashboard = async (req, res) => {
         recentCourses,
         recentActivities,
       },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+exports.deleteActivity = async (req, res) => {
+  try {
+    const { activityId } = req.params;
+    const { type } = req.query;
+
+    switch (type?.toUpperCase()) {
+      case "NOTIFICATION":
+        await Notification.findByIdAndDelete(activityId);
+        break;
+
+      case "SUPPORT":
+        await SupportTicket.findByIdAndDelete(activityId);
+        break;
+
+
+      default:
+        return res.status(400).json({
+          success: false,
+          message: "Invalid activity type",
+        });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Activity deleted successfully",
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete activity",
+    });
+  }
+};
+
+
+
+exports.markActivityAsRead = async (req, res) => {
+  try {
+      
+    const { activityId } = req.params;
+
+    const notification = await  Notification.findByIdAndUpdate(
+      activityId,
+      {
+         isRead: true,
+      },
+      { new: true }
+    );
+     
+
+    return res.status(200).json({
+      success: true,
+      data: notification,
     });
   } catch (error) {
     return res.status(500).json({
