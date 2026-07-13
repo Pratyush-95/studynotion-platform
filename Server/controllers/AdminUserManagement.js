@@ -1194,3 +1194,117 @@ return res.status(200).json({
 
 };
 
+
+exports.getPublishedCourses = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Instructor ID",
+      });
+    }
+
+    // Check Instructor
+    const instructor = await User.findById(userId).select(
+      "firstName lastName accountType"
+    );
+
+    if (!instructor) {
+      return res.status(404).json({
+        success: false,
+        message: "Instructor not found",
+      });
+    }
+
+    if (instructor.accountType !== "Instructor") {
+      return res.status(400).json({
+        success: false,
+        message: "User is not an instructor",
+      });
+    }
+
+    // Get Published Courses
+    const courses = await Course.find({
+      instructor: userId,
+      status: "Published",
+    })
+      .populate("category", "name")
+      .populate("ratingAndReviews", "rating")
+      .sort({ createdAt: -1 });
+
+    let totalStudents = 0;
+    let totalRevenue = 0;
+    let ratingSum = 0;
+    let ratingCount = 0;
+
+    const categoriesMap = new Map();
+
+    const formattedCourses = courses.map((course) => {
+      const studentsCount = course.studentsEnroled.length;
+
+      const revenue = course.price * studentsCount;
+
+      totalStudents += studentsCount;
+      totalRevenue += revenue;
+
+      let averageRating = 0;
+
+      if (course.ratingAndReviews.length > 0) {
+        const sum = course.ratingAndReviews.reduce(
+          (acc, curr) => acc + curr.rating,
+          0
+        );
+
+        averageRating = sum / course.ratingAndReviews.length;
+
+        ratingSum += sum;
+        ratingCount += course.ratingAndReviews.length;
+      }
+
+      if (course.category) {
+        categoriesMap.set(course.category._id.toString(), {
+          _id: course.category._id,
+          name: course.category.name,
+        });
+      }
+
+      return {
+        _id: course._id,
+        courseName: course.courseName,
+        thumbnail: course.thumbnail,
+        price: course.price,
+        category: course.category?.name || "",
+        studentsCount,
+        revenue,
+        averageRating,
+        createdAt: course.createdAt,
+        updatedAt: course.updatedAt,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      courses: formattedCourses,
+
+      stats: {
+        totalCourses: formattedCourses.length,
+        totalStudents,
+        totalRevenue,
+        averageRating:
+          ratingCount === 0 ? 0 : ratingSum / ratingCount,
+      },
+
+      categories: Array.from(categoriesMap.values()),
+    });
+  } catch (error) {
+    console.log("GET_PUBLISHED_COURSES_ERROR", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

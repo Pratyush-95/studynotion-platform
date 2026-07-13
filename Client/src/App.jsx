@@ -46,6 +46,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { getUserDetails } from "./services/operations/profileAPI";
 import InstructorProfilePage from "./components/core/Dashboard/AdminUserManagement/InstructorProfilePage";
 import StudentProfilePage from "./components/core/Dashboard/AdminUserManagement/StudentProfilePage";
+import PublishedCoursesPage from "./components/core/Dashboard/AdminUserManagement/PublishedCoursesPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -160,6 +161,7 @@ function App() {
             <Route path="dashboard/rejected-instructors" element={<RejectedInstructors />} />
             <Route path="dashboard/user-management" element={<AdminUserManagement />} />
             <Route path="dashboard/user-management/instructor/:userId" element={<InstructorProfilePage />}/>
+            <Route path="dashboard/user-management/instructor/:userId/published-courses" element={<PublishedCoursesPage />}/>
             <Route path="dashboard/user-management/student/:userId" element={<StudentProfilePage />}/>
             <Route path="dashboard/all-activities" element={<AllActivities />} />
           </>

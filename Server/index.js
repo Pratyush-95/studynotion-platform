@@ -80,6 +80,7 @@ app.use(
 app.use("/api/v1/admin-user", adminUserRoutes);
 
 
+
 app.get("/", (req, res) => {
 	return res.json({
 		success: true,

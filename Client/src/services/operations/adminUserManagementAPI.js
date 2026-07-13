@@ -8,6 +8,7 @@ const {
   TOGGLE_USER_STATUS_API,
   SEND_NOTIFICATION_API,
   DELETE_USER_API,
+  GET_PUBLISHED_COURSES_API,
 } = adminUserManagementEndpoints;
 
 // ======================================================
@@ -210,7 +211,7 @@ export const deleteUser = async (
     );
 
     result = response.data;
-    console.log("Ye data aa rha hai "+response.data.users);
+    //console.log("Ye data aa rha hai "+response.data.users);
 
     toast.success(response.data.message);
 
@@ -228,6 +229,58 @@ export const deleteUser = async (
   }
 
   toast.dismiss(toastId);
+
+  return result;
+
+};
+
+
+// ======================================================
+// Published Courses
+// ======================================================
+
+export const getPublishedCourses = async (
+  token,
+  userId
+) => {
+
+  let result = null;
+
+  try {
+
+    const response = await apiConnector(
+
+      "GET",
+
+      `${GET_PUBLISHED_COURSES_API}/${userId}/published-courses`,
+
+      null,
+
+      {
+
+        Authorization: `Bearer ${token}`,
+
+      }
+
+    );
+
+    result = response.data;
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    toast.error(
+
+      error?.response?.data?.message ||
+
+      "Unable to fetch published courses."
+
+    );
+
+  }
 
   return result;
 

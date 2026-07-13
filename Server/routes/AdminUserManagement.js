@@ -8,7 +8,8 @@ const {
   viewUserProfile,
   toggleUserStatus,
   sendNotification,
-   deleteUser,
+  deleteUser,
+  getPublishedCourses,
 } = require("../controllers/AdminUserManagement");
 
 // =========================================
@@ -60,6 +61,13 @@ router.delete(
   auth,
   isAdmin,
   deleteUser
+);
+
+router.get(
+  "/instructor/:userId/published-courses",
+  auth,
+  isAdmin,
+  getPublishedCourses
 );
 
 module.exports = router;

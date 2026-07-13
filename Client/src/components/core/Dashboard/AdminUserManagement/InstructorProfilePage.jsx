@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import PendingCoursesModal from "./PendingCoursesModal";
 import RejectedCoursesModal from "./RejectedCoursesModal";
-//import DraftCoursesModal from "./DraftCoursesModal";
+import DraftCoursesModal from "./DraftCoursesModal";
 
 import { viewUserProfile } from "../../../../services/operations/adminUserManagementAPI";
 
@@ -258,9 +258,11 @@ console.log("Instructor Data:", user);
                     </div>
 
                     <div
-  onClick={() =>
-    navigate(`/dashboard/admin/instructor/${userId}/published-courses`)
-  }
+                    onClick={() =>
+  navigate(
+    `/dashboard/user-management/instructor/${userId}/published-courses`
+  )
+}
   className="
     group
     cursor-pointer

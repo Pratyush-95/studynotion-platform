@@ -149,6 +149,10 @@ export const adminUserManagementEndpoints = {
   DELETE_USER_API:
     BASE_URL + "/admin-user/delete-user",
 
+  GET_PUBLISHED_COURSES_API:
+    BASE_URL + "/admin-user/instructor",
+
+
 };
 
 
