@@ -10,7 +10,7 @@ import { addToCart } from "../../../slices/cartSlice"
 import { ACCOUNT_TYPE } from "../../../utils/constants"
 
 
-function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
+function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse, isAdmin, }) {
   const { user } = useSelector((state) => state.profile)
   const { token } = useSelector((state) => state.auth)
   const navigate = useNavigate()

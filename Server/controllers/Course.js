@@ -430,6 +430,9 @@ exports.getFullCourseDetails = async (req, res) => {
   try {
     const { courseId } = req.body;
     const userId = req.user.id;
+    const userDetails = await User.findById(userId);
+
+let courseProgressCount = null;
 
     if (!courseId) {
   return res.status(400).json({
@@ -456,12 +459,14 @@ exports.getFullCourseDetails = async (req, res) => {
       })
       .exec();
 
-    let courseProgressCount = await CourseProgress.findOne({
-      courseID: courseId,
-      userId: userId,
-    });
+  if (userDetails.accountType !== "Admin") {
+  courseProgressCount = await CourseProgress.findOne({
+    courseID: courseId,
+    userId: userId,
+  });
 
-    console.log("courseProgressCount : ", courseProgressCount);
+  // console.log("courseProgressCount :", courseProgressCount);
+}
 
     if (!courseDetails) {
       return res.status(400).json({

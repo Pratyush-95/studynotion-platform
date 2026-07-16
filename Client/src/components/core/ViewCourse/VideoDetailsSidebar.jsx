@@ -5,12 +5,18 @@ import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 
 import IconBtn from "../../common/IconBtn"
+import { ACCOUNT_TYPE } from "../../../utils/constants";
 
 export default function VideoDetailsSidebar({ setReviewModal }) {
   const [activeStatus, setActiveStatus] = useState("")
   const [videoBarActive, setVideoBarActive] = useState("")
   const navigate = useNavigate()
   const location = useLocation()
+  const isAdminPreview =
+  new URLSearchParams(location.search).get("adminPreview") === "true";
+
+  console.log("location.search =", location.search);
+console.log("isAdminPreview =", isAdminPreview);
   const { sectionId, subSectionId } = useParams()
   const {
     courseSectionData,
@@ -18,6 +24,8 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
     totalNoOfLectures,
     completedLectures,
   } = useSelector((state) => state.viewCourse)
+  const { user } = useSelector((state) => state.profile);
+const isAdmin = user?.accountType === ACCOUNT_TYPE.ADMIN;
 
   useEffect(() => {
     ;(() => {
@@ -45,18 +53,27 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
           <div className="flex w-full items-center justify-between ">
             <div
               onClick={() => {
-                navigate(`/dashboard/enrolled-courses`)
+                const isAdminPreview =
+                new URLSearchParams(location.search).get("adminPreview") === "true";
+                navigate(
+                  isAdminPreview
+                  ? `/courses/${courseEntireData?._id}`
+                  : `/dashboard/enrolled-courses`
+                );
               }}
               className="flex h-[35px] w-[35px] items-center justify-center rounded-full bg-richblack-100 p-1 text-richblack-700 hover:scale-90"
               title="back"
             >
               <IoIosArrowBack size={30} />
             </div>
-            <IconBtn
+
+            {!isAdminPreview && (
+              <IconBtn
               text="Add Review"
               customClasses="ml-auto"
               onClick={() => setReviewModal(true)}
             />
+            )}
           </div>
           <div className="flex flex-col">
             <p>{courseEntireData?.courseName}</p>
@@ -106,15 +123,17 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
                       } `}
                       key={i}
                       onClick={() => {
-                        navigate(
-                          `/view-course/${courseEntireData?._id}/section/${course?._id}/sub-section/${topic?._id}`
-                        )
+                       navigate(
+  `/view-course/${courseEntireData?._id}/section/${course?._id}/sub-section/${topic?._id}${
+    isAdminPreview ? "?adminPreview=true" : ""
+  }`
+)
                         setVideoBarActive(topic._id)
                       }}
                     >
                       <input
                         type="checkbox"
-                        checked={completedLectures.includes(topic?._id)}
+                        checked={!isAdminPreview && completedLectures.includes(topic._id)}
                         onChange={() => {}}
                       />
                       {topic.title}

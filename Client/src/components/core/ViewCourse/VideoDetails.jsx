@@ -13,6 +13,8 @@ const VideoDetails = () => {
   const { courseId, sectionId, subSectionId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
+  const isAdminPreview =
+  new URLSearchParams(location.search).get("adminPreview") === "true";
   const playerRef = useRef(null)
   const dispatch = useDispatch()
   const { token } = useSelector((state) => state.auth)
@@ -104,16 +106,20 @@ const VideoDetails = () => {
         courseSectionData[currentSectionIndx].subSection[
           currentSubSectionIndx + 1
         ]._id
-      navigate(
-        `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}`
-      )
+     navigate(
+ `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}${
+   isAdminPreview ? "?adminPreview=true" : ""
+ }`
+)
     } else {
       const nextSectionId = courseSectionData[currentSectionIndx + 1]._id
       const nextSubSectionId =
         courseSectionData[currentSectionIndx + 1].subSection[0]._id
       navigate(
-        `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}`
-      )
+ `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}${
+   isAdminPreview ? "?adminPreview=true" : ""
+ }`
+)
     }
   }
 
@@ -157,9 +163,11 @@ const VideoDetails = () => {
         courseSectionData[currentSectionIndx].subSection[
           currentSubSectionIndx - 1
         ]._id
-      navigate(
-        `/view-course/${courseId}/section/${sectionId}/sub-section/${prevSubSectionId}`
-      )
+     navigate(
+ `/view-course/${courseId}/section/${sectionId}/sub-section/${prevSubSectionId}${
+   isAdminPreview ? "?adminPreview=true" : ""
+ }`
+)
     } else {
       const prevSectionId = courseSectionData[currentSectionIndx - 1]._id
       const prevSubSectionLength =
@@ -169,8 +177,10 @@ const VideoDetails = () => {
           prevSubSectionLength - 1
         ]._id
       navigate(
-        `/view-course/${courseId}/section/${prevSectionId}/sub-section/${prevSubSectionId}`
-      )
+ `/view-course/${courseId}/section/${prevSectionId}/sub-section/${prevSubSectionId}${
+   isAdminPreview ? "?adminPreview=true" : ""
+ }`
+)
     }
   }
 
@@ -282,7 +292,7 @@ const VideoDetails = () => {
                   height="100%"
                   onEnded={async () => {
                     setVideoEnded(true)
-                    if(!completedLectures.includes(subSectionId)){
+                    if( !isAdminPreview && !completedLectures.includes(subSectionId)){
                       const res=await markLectureAsComplete(
                         { courseId: courseId, subsectionId: subSectionId },
                         token
@@ -347,7 +357,7 @@ const VideoDetails = () => {
               }}
               className="full absolute inset-0 z-[100] grid h-full place-content-center font-inter"
             >
-              {!completedLectures.includes(subSectionId) && (
+              {!isAdminPreview && !completedLectures.includes(subSectionId) && (
                 <IconBtn
                   disabled={loading}
                   onClick={() => handleLectureCompletion()}

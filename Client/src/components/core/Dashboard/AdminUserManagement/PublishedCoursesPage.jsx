@@ -231,8 +231,8 @@ const PublishedCoursesPage = () => {
   // ==========================================================
 
   const handleView = (course) => {
-    navigate(`/dashboard/course/${course._id}`);
-  };
+  navigate(`/courses/${course._id}`);
+};
 
   const handleEdit = (course) => {
     navigate(`/dashboard/edit-course/${course._id}`);
@@ -243,17 +243,17 @@ const PublishedCoursesPage = () => {
   };
 
   return (
-  <div className="mx-auto w-11/12 max-w-7xl py-8">
+  <div className="mx-auto w-[95%] max-w-[1500px] space-y-8 py-4">
 
     {/* Header */}
 
-    <div className="mb-8 flex flex-col gap-3">
+    <div className="flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-richblack-700 pb-6">
 
-      <h1 className="text-3xl font-bold text-richblack-5">
+      <h1 className="text-4xl font-bold text-richblack-5">
         Published Courses
       </h1>
 
-      <p className="text-richblack-300">
+      <p className="max-w-2xl text-richblack-300">
         View and manage all published courses of this instructor.
       </p>
 
@@ -261,13 +261,13 @@ const PublishedCoursesPage = () => {
 
     {/* Stats */}
 
-    <PublishedCourseStats
-      stats={stats}
-    />
+   <div className="rounded-2xl mt-2">
+    <PublishedCourseStats stats={stats}/>
+</div>
 
     {/* Filters */}
 
-    <div className="mt-8">
+    <div className="rounded-2xl border border-richblack-700 bg-richblack-800 p-2">
 
       <PublishedCourseFilters
 
@@ -294,7 +294,7 @@ const PublishedCoursesPage = () => {
 
     {loading ? (
 
-      <div className="flex h-[350px] items-center justify-center">
+      <div className="flex h-[220px] items-center justify-center">
 
         <div className="h-14 w-14 animate-spin rounded-full border-4 border-yellow-50 border-t-transparent"></div>
 
@@ -304,14 +304,18 @@ const PublishedCoursesPage = () => {
 
       /* Empty */
 
-      <div className="mt-16 flex flex-col items-center justify-center rounded-xl border border-richblack-700 bg-richblack-800 py-20">
+      <div className="mt-10 rounded-2xl border border-dashed border-richblack-600 bg-richblack-800 py-24 text-center">
 
-        <h2 className="text-2xl font-semibold text-richblack-5">
+        <div className="text-7xl">
+          📚
+        </div>
+
+        <h2 className="mt-5 text-3xl font-bold text-richblack-5">
           No Published Courses
         </h2>
 
-        <p className="mt-2 text-richblack-400">
-          This instructor has not published any course yet.
+        <p className="mt-3 text-richblack-300">
+          This instructor hasn't published any course yet.
         </p>
 
       </div>
@@ -355,13 +359,13 @@ const PublishedCoursesPage = () => {
 
               disabled={currentPage === 1}
 
-              className="rounded-lg bg-richblack-700 px-5 py-2 text-richblack-5 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-richblack-700 px-5 py-2 text-richblack-5 transition-all duration-300 hover:bg-yellow-50 hover:text-richblack-900 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-richblack-700 disabled:hover:text-richblack-5"
 
             >
               Previous
             </button>
 
-            <span className="rounded-lg bg-yellow-50 px-5 py-2 font-semibold text-richblack-900">
+            <span className="rounded-xl bg-yellow-50 px-5 py-2 font-semibold text-richblack-900">
 
               {currentPage} / {totalPages}
 
@@ -373,7 +377,7 @@ const PublishedCoursesPage = () => {
 
               disabled={currentPage === totalPages}
 
-              className="rounded-lg bg-richblack-700 px-5 py-2 text-richblack-5 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl bg-richblack-700 px-5 py-2 text-richblack-5 transition-all duration-300 hover:bg-yellow-50 hover:text-richblack-900 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-richblack-700 disabled:hover:text-richblack-5"
 
             >
               Next

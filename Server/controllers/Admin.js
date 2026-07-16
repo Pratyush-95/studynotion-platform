@@ -986,3 +986,93 @@ exports.markActivityAsRead = async (req, res) => {
     });
   }
 };
+
+
+const CourseProgress = require("../models/CourseProgress");
+
+exports.getInstructorStudents = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Published Courses of Instructor
+    const courses = await Course.find({
+      instructor: userId,
+      status: "Published",
+    })
+      .populate({
+        path: "studentsEnroled",
+        select: "firstName lastName email image active createdAt",
+      })
+      .populate({
+        path: "courseContent",
+        populate: {
+          path: "subSection",
+        },
+      });
+
+    const students = [];
+
+    for (const course of courses) {
+      // Total lectures
+      let totalLectures = 0;
+
+      course.courseContent.forEach((section) => {
+        totalLectures += section.subSection.length;
+      });
+
+      for (const student of course.studentsEnroled) {
+        const progress = await CourseProgress.findOne({
+          courseID: course._id,
+          userId: student._id,
+        });
+
+        const completed =
+          progress?.completedVideos?.length || 0;
+
+        const progressPercent =
+          totalLectures === 0
+            ? 0
+            : Math.round(
+                (completed / totalLectures) * 100
+              );
+
+        students.push({
+          _id: student._id,
+
+          name:
+            student.firstName +
+            " " +
+            student.lastName,
+
+          email: student.email,
+
+          image: student.image,
+
+          course: course.courseName,
+
+          progress: progressPercent,
+
+          enrolledDate: course.createdAt,
+
+          status:
+            progressPercent === 100
+              ? "Completed"
+              : "Learning",
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      totalStudents: students.length,
+      students,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

@@ -16,7 +16,8 @@ const {
   getAdminDashboard,
   getRecentActivities,
   deleteActivity,
-  markActivityAsRead
+  markActivityAsRead,
+  getInstructorStudents,
 } = require("../controllers/Admin");
 
 router.get(
@@ -107,5 +108,12 @@ router.patch(
   auth,
   isAdmin,
   markActivityAsRead
+);
+
+router.get(
+  "/instructor/:userId/students",
+  auth,
+  isAdmin,
+  getInstructorStudents
 );
 module.exports = router;

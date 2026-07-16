@@ -260,7 +260,7 @@ console.log("Instructor Data:", user);
                     <div
                     onClick={() =>
   navigate(
-    `/dashboard/user-management/instructor/${userId}/published-courses`
+    `/dashboard/admin/instructor/${userId}/published-courses`
   )
 }
   className="

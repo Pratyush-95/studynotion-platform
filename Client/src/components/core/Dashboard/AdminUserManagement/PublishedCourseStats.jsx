@@ -22,7 +22,7 @@ const PublishedCourseStats = ({ stats }) => {
     {
       title: "Revenue",
       value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`,
-      icon: <FaRupeeSign className="text-2xl text-green-400" />,
+      icon: <FaRupeeSign className="text-2xl  text-caribbeangreen-100" />,
       subtitle: "Total Earnings",
     },
     {
@@ -49,12 +49,10 @@ const PublishedCourseStats = ({ stats }) => {
               </p>
 
               <h2
-  className={`mt-2 text-3xl font-bold ${
-    card.title === "Revenue"
-      ? "text-green-300"
-      : "text-richblack-5"
-  }`}
->
+                className={`mt-2 text-3xl font-bold ${
+                card.title === "Revenue"
+                ?"text-caribbeangreen-100"
+                : "text-richblack-5"}`}>
                 {card.value}
               </h2>
             </div>

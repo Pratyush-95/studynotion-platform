@@ -4,7 +4,7 @@ import { HiOutlineGlobeAlt } from "react-icons/hi"
 import ReactMarkdown from "react-markdown"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
-
+import { toast } from "react-hot-toast";
 import ConfirmationModal from "../components/common/ConfirmationModal"
 import Footer from "../components/common/Footer"
 import RatingStars from "../components/common/RatingStars"
@@ -15,9 +15,11 @@ import { fetchCourseDetails } from "../services/operations/courseDetailsAPI"
 import { buyCourse } from "../services/operations/studentFeaturesAPI"
 import GetAvgRating from "../utils/avgRating"
 import Error from "./Error" 
+import { ACCOUNT_TYPE } from "../utils/constants";
 
 function CourseDetails() {
   const { user } = useSelector((state) => state.profile)
+  const isAdmin = user?.accountType === ACCOUNT_TYPE.ADMIN;
   const { token } = useSelector((state) => state.auth)
   const { loading } = useSelector((state) => state.profile)
   const { paymentLoading } = useSelector((state) => state.course)
@@ -194,13 +196,61 @@ function CourseDetails() {
             </div>
           </div>
           {/* Courses Card */}
-          <div className="right-[1rem] top-[60px] mx-auto hidden min-h-[600px] w-1/3 max-w-[410px] translate-y-24 md:translate-y-0 lg:absolute  lg:block">
-            <CourseDetailsCard
-              course={response?.data?.courseDetails}
-              setConfirmationModal={setConfirmationModal}
-              handleBuyCourse={handleBuyCourse}
-            />
-          </div>
+           {/* Right Side */}
+<div className="right-[1rem] top-[25px] mx-auto hidden w-1/3 max-w-[410px] translate-y-0 md:translate-y-0 lg:absolute lg:block">
+
+  {isAdmin ? (
+
+    <div className="rounded-xl border border-richblack-700 bg-richblack-800 p-4 shadow-lg">
+
+      <img
+        src={thumbnail}
+        alt={courseName}
+        className="h-[250px] w-full rounded-xl object-cover"
+      />
+
+      <h3 className="mt-4 text-xl font-semibold text-richblack-5">
+        Admin Preview
+      </h3>
+
+      <p className="mt-2 text-richblack-300">
+        You are viewing this course as an administrator.
+      </p>
+
+      <div className="mt-6">
+       <button
+    onClick={() => {
+        const firstSection = courseContent?.[0];
+        const firstLecture = firstSection?.subSection?.[0];
+
+        if (!firstSection || !firstLecture) {
+            toast.error("No lectures found");
+            return;
+        }
+
+        navigate(
+            `/view-course/${course_id}/section/${firstSection._id}/sub-section/${firstLecture._id}?adminPreview=true`
+        );
+    }}
+    className="yellowButton w-full"
+>
+    Preview Lectures
+</button>
+      </div>
+
+    </div>
+
+  ) : (
+
+    <CourseDetailsCard
+      course={response?.data?.courseDetails}
+      setConfirmationModal={setConfirmationModal}
+      handleBuyCourse={handleBuyCourse}
+    />
+
+  )}
+
+</div>
         </div>
       </div>
       <div className="mx-auto box-content px-4 text-start text-richblack-5 lg:w-[1260px]">

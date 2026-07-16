@@ -8,9 +8,9 @@ exports.updateCourseProgress = async (req, res) => {
   const { courseId, subsectionId } = req.body;
   const userId = req.user.id;
 
-  console.log("courseId:", courseId);
-  console.log("subsectionId:", subsectionId);
-  console.log("userId:", userId);
+  // console.log("courseId:", courseId);
+  // console.log("subsectionId:", subsectionId);
+  // console.log("userId:", userId);
 
   try {
     const subsection = await SubSection.findById(subsectionId);

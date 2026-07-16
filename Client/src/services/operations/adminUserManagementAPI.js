@@ -9,6 +9,7 @@ const {
   SEND_NOTIFICATION_API,
   DELETE_USER_API,
   GET_PUBLISHED_COURSES_API,
+  GET_INSTRUCTOR_STUDENTS_API,
 } = adminUserManagementEndpoints;
 
 // ======================================================
@@ -278,6 +279,53 @@ export const getPublishedCourses = async (
 
       "Unable to fetch published courses."
 
+    );
+
+  }
+
+  return result;
+
+};
+
+
+// ======================================================
+// Instructor Students
+// ======================================================
+
+export const getInstructorStudents = async (
+  token,
+  userId
+) => {
+
+  let result = null;
+
+  try {
+
+    const response = await apiConnector(
+
+      "GET",
+
+      `${GET_INSTRUCTOR_STUDENTS_API}/${userId}/students`,
+
+      null,
+
+      {
+        Authorization: `Bearer ${token}`,
+      }
+
+    );
+
+    result = response.data;
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+    toast.error(
+      error?.response?.data?.message ||
+      "Unable to fetch students."
     );
 
   }

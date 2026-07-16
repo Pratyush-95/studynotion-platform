@@ -152,6 +152,9 @@ export const adminUserManagementEndpoints = {
   GET_PUBLISHED_COURSES_API:
     BASE_URL + "/admin-user/instructor",
 
+  GET_INSTRUCTOR_STUDENTS_API:
+    BASE_URL + "/admin/instructor",
+
 
 };
 
