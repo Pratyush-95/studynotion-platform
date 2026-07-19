@@ -6,7 +6,7 @@ const StudentTable = ({ students }) => {
 
       <div className="overflow-x-auto">
 
-        <table className="w-full">
+        <table className="w-full ">
 
           {/* Header */}
 
@@ -14,11 +14,11 @@ const StudentTable = ({ students }) => {
 
             <tr>
 
-              <th className="px-6 py-4 text-left text-sm font-semibold text-richblack-5">
+              <th className="w-[280px] px-6 py-4 text-left text-sm font-semibold text-richblack-5">
                 Student
               </th>
 
-              <th className="px-6 py-4 text-left text-sm font-semibold text-richblack-5">
+              <th className="w-[320px] px-8 py-5 text-left text-sm font-semibold text-richblack-5">
                 Email
               </th>
 
@@ -53,7 +53,7 @@ const StudentTable = ({ students }) => {
 
                 {/* Student */}
 
-                <td className="px-6 py-5">
+                <td className="w-[300px] px-6 py-5">
 
                   <div className="flex items-center gap-3">
 
@@ -82,7 +82,7 @@ const StudentTable = ({ students }) => {
 
                 {/* Email */}
 
-                <td className="px-6 py-5 text-richblack-300">
+                <td className="w-[320px] px-8 py-6 text-richblack-300">
 
                   {student.email}
 
@@ -151,7 +151,7 @@ const StudentTable = ({ students }) => {
 
                   {student.status === "Completed" ? (
 
-                    <span className="flex w-fit items-center gap-2 rounded-full bg-green-500/20 px-3 py-1 text-sm font-semibold text-green-300">
+                    <span className="flex w-fit items-center gap-2 rounded-full bg-green-500/20 px-3 py-1 text-sm font-semibold bg-caribbeangreen-100">
 
                       <FaCheckCircle />
 

@@ -87,9 +87,9 @@ try {
         message: "Invalid course price",
     });
   }
-    if (!status || status === undefined) {
-      status = "Pending";
-    }
+    // if (!status || status === undefined) {
+    //   status = "Pending";
+    // }
 
     const instructorDetails = await User.findById(userId);
     if (!instructorDetails) {
@@ -146,7 +146,7 @@ try {
       tag,
       category: categoryDetails._id,
       thumbnail: thumbnailImage.secure_url,
-      status: status,
+      status:  "Pending",
       instructions,
     });
 
@@ -197,6 +197,7 @@ exports.editCourse = async (req, res) => {
 
     const updates = { ...req.body };
     delete updates.courseId;
+    delete updates.status;
 
     if (
   updates.price !== undefined &&

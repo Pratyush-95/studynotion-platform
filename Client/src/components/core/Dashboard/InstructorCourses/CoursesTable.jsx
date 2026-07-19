@@ -137,20 +137,27 @@ export default function CoursesTable({ courses, setCourses }) {
                     </p>
                     <p className="text-[12px] text-white">
                       Created: {formatDate(course.createdAt)}
-                    </p>
-                    {course.status === COURSE_STATUS.DRAFT ? (
-                      <p className="flex w-fit flex-row items-center gap-2 rounded-full bg-richblack-700 px-2 py-[2px] text-[12px] font-medium text-pink-100">
-                        <HiClock size={14} />
-                        Drafted
-                      </p>
-                    ) : (
-                      <p className="flex w-fit flex-row items-center gap-2 rounded-full bg-richblack-700 px-2 py-[2px] text-[12px] font-medium text-yellow-100">
-                        <div className="flex h-3 w-3 items-center justify-center rounded-full bg-yellow-100 text-richblack-700">
-                          <FaCheck size={8} />
-                        </div>
-                        Published
-                      </p>
-                    )}
+                    </p> 
+
+                    {course.status === "Pending" && (
+  <p className="flex w-fit items-center gap-2 rounded-full bg-yellow-500/20 px-3 py-1 text-[12px] font-medium text-yellow-300">
+    <HiClock size={14} />
+    Pending
+  </p>
+)}
+
+{course.status === "Published" && (
+  <p className="flex w-fit items-center gap-2 rounded-full bg-caribbeangreen-700 px-3 py-1 text-[12px] font-medium text-white">
+    <FaCheck size={12} />
+    Published
+  </p>
+)}
+
+{course.status === "Rejected" && (
+  <p className="flex w-fit items-center gap-2 rounded-full bg-pink-500/20 px-3 py-1 text-[12px] font-medium text-pink-300">
+    Rejected
+  </p>
+)}
                   </div>
                 </Td>
                 <Td className="text-sm font-medium text-richblack-100">

@@ -155,6 +155,8 @@ export const adminUserManagementEndpoints = {
   GET_INSTRUCTOR_STUDENTS_API:
     BASE_URL + "/admin/instructor",
 
+  GET_DASHBOARD_STATS_API:
+    BASE_URL + "/admin/dashboard-stats",
 
 };
 
@@ -172,4 +174,20 @@ export const adminActivityEndpoints = {
 
   MARK_ACTIVITY_READ_API:
     BASE_URL + "/admin/activity",
+};
+
+
+// ========================================
+// Admin Course Approval
+// ========================================
+
+export const adminCourseApprovalEndpoints = {
+  GET_PENDING_COURSES_API:
+    BASE_URL + "/admin/pending-courses",
+
+  APPROVE_COURSE_API:
+    BASE_URL + "/admin/courses",
+
+  REJECT_COURSE_API:
+    BASE_URL + "/admin/courses",
 };

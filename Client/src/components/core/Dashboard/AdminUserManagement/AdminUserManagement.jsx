@@ -5,7 +5,7 @@ import SearchFilters from "./SearchFilters";
 import UserTable from "./UserTable";
 import Pagination from "./Pagination";
 import { useSelector } from "react-redux";
-import { searchUser, viewUserProfile, toggleUserStatus, sendNotification, deleteUser } from "../../../../services/operations/adminUserManagementAPI";
+import { searchUser, viewUserProfile, toggleUserStatus, sendNotification, deleteUser,  getDashboardStats, } from "../../../../services/operations/adminUserManagementAPI";
 import DeleteUserModal from "./DeleteUserModal";
 import {
   FaUsers,
@@ -14,6 +14,7 @@ import {
   FaChalkboardTeacher,
   FaUserGraduate,
 } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa";
 
 const AdminUserManagement = () => {
 
@@ -39,15 +40,25 @@ const AdminUserManagement = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [dashboardStats, setDashboardStats] = useState(null);
   
   const { token } = useSelector((state) => state.auth);
+  const totalUsers = dashboardStats?.totalUsers || users.length;
 
-  const totalUsers = users.length;
-  const activeUsers = users.filter((user) => user.active).length;
-  const blockedUsers = users.filter((user) => !user.active).length;
-  const instructorCount = users.filter((user) => user.accountType === "Instructor").length;
-  const studentCount = users.filter((user) => user.accountType === "Student").length;
+const instructorCount =
+  dashboardStats?.totalInstructors ||
+  users.filter((user) => user.accountType === "Instructor").length;
 
+const studentCount =
+  dashboardStats?.totalStudents ||
+  users.filter((user) => user.accountType === "Student").length;
+
+const newUsersToday =
+  dashboardStats?.newUsersToday || 0;
+
+const activeUsers = users.filter((user) => user.active).length;
+const blockedUsers = users.filter((user) => !user.active).length;
+  
   
 
   // ======================================================
@@ -168,6 +179,22 @@ const handleDeleteUser = async (userId) => {
   }
 
 };
+
+const fetchDashboardStats = async () => {
+  const response = await getDashboardStats(token);
+
+  if (response?.success) {
+    setDashboardStats(response.data);
+  }
+};
+
+useEffect(() => {
+  if (!token) return;
+
+  fetchDashboardStats();
+}, [token]);
+
+
   useEffect(() => {
     if (!token) return;
     if (!searchQuery.trim()) return;
@@ -203,7 +230,7 @@ speed and high-end controls.
 
 {/* ================= STATS ================= */}
 
-<div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
+<div className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-6">
 
   {/* Total Users */}
 
@@ -324,6 +351,30 @@ speed and high-end controls.
     </div>
 
   </div>
+
+  {/* New Users Today */}
+
+<div className="rounded-xl border border-richblack-700 bg-richblack-900 p-5 hover:border-blue-400 transition-all">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+
+      <p className="text-richblack-400">
+        New Users Today
+      </p>
+
+      <h2 className="mt-2 text-3xl font-bold text-blue-400">
+        {newUsersToday}
+      </h2>
+
+    </div>
+
+    <FaUserPlus className="text-4xl text-blue-400" />
+
+  </div>
+
+</div>
 
 </div>
 

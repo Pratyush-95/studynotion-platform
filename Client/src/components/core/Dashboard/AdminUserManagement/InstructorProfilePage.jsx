@@ -102,7 +102,7 @@ console.log("Instructor Data:", user);
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-xl bg-richblack-800 px-4 py-2 text-sm font-semibold text-richblack-50">{basic.accountType}</span>
-            <span className={`rounded-xl px-4 py-2 text-sm font-semibold ${basic.active ? "bg-emerald-500/15 text-emerald-300" : "bg-red-500/15 text-red-300"}`}>
+            <span className={`rounded-xl px-4 py-2 text-sm font-semibold ${basic.active ? "bg-caribbeangreen-900 text-caribbeangreen-100" : "bg-red-500/15 text-red-300"}`}>
               {basic.active ? "Active" : "Blocked"}
             </span>
             <button
@@ -119,14 +119,7 @@ console.log("Instructor Data:", user);
             <section className="rounded-xl border border-richblack-700 bg-richblack-950/80 p-6">
               <h3 className="mb-5 text-xl font-semibold text-yellow-50">Basic Information</h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-lg bg-richblack-900 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-richblack-400">Name</p>
-                  <p className="mt-2 text-richblack-5">{basic.firstName} {basic.lastName}</p>
-                </div>
-                <div className="rounded-lg bg-richblack-900 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-richblack-400">Email</p>
-                  <p className="mt-2 text-richblack-5">{basic.email}</p>
-                </div>
+                
                 <div className="rounded-lg bg-richblack-900 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-richblack-400">Joined</p>
                   <p className="mt-2 text-richblack-5">{new Date(basic.joinedOn).toLocaleDateString()}</p>
@@ -161,7 +154,7 @@ console.log("Instructor Data:", user);
                   <p className="text-xs uppercase tracking-[0.2em] text-richblack-400">DOB</p>
                   <p className="mt-2 text-richblack-5">{profile.dateOfBirth || "-"}</p>
                 </div>
-                <div className="sm:col-span-2 rounded-lg bg-richblack-900 p-4">
+                <div className="rounded-lg bg-richblack-900 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-richblack-400">About</p>
                   <p className="mt-2 text-richblack-5">{profile.about || "-"}</p>
                 </div>

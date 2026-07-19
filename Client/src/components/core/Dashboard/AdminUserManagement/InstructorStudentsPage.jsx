@@ -123,7 +123,7 @@ const InstructorStudentsPage = () => {
 
   return (
 
-    <div className="mx-auto w-[95%] max-w-[1500px] space-y-8 py-4">
+    <div className="mx-auto w-[98%] max-w-[1500px] space-y-8 py-4">
 
       {/* Header */}
 

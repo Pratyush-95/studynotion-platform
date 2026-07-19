@@ -10,6 +10,7 @@ const {
   DELETE_USER_API,
   GET_PUBLISHED_COURSES_API,
   GET_INSTRUCTOR_STUDENTS_API,
+  GET_DASHBOARD_STATS_API,
 } = adminUserManagementEndpoints;
 
 // ======================================================
@@ -332,4 +333,35 @@ export const getInstructorStudents = async (
 
   return result;
 
+};
+
+
+// ======================================================
+// Dashboard Stats
+// ======================================================
+
+export const getDashboardStats = async (token) => {
+  let result = null;
+
+  try {
+    const response = await apiConnector(
+      "GET",
+      GET_DASHBOARD_STATS_API,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    result = response.data;
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error?.response?.data?.message ||
+        "Unable to fetch dashboard stats."
+    );
+  }
+
+  return result;
 };

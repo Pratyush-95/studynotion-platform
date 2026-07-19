@@ -177,6 +177,18 @@ exports.getDashboardStats = async (req, res) => {
         approvalStatus: "Rejected",
     });
 
+    
+    // New Users Today
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const newUsersToday = await User.countDocuments({
+      createdAt: {
+        $gte: startOfToday,
+      },
+    });
+
     const totalCourses = await Course.countDocuments();
 
     const pendingCourses = await Course.countDocuments({
@@ -228,6 +240,7 @@ const rejectedCourses = await Course.countDocuments({
         approvedInstructors,
         pendingInstructors,
         rejectedInstructors,
+        newUsersToday,
 
         totalCourses,
 
@@ -362,6 +375,7 @@ exports.rejectCourse = async (req, res) => {
   try {
 
     const { courseId } = req.params;
+    const { reason } = req.body;
 
     const course = await Course.findById(courseId);
 
@@ -373,6 +387,7 @@ exports.rejectCourse = async (req, res) => {
     }
 
     course.status = "Rejected";
+    course.rejectionReason = reason || "";
 
     await course.save();
 

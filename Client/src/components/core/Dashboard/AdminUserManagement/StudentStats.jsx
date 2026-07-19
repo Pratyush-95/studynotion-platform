@@ -52,7 +52,7 @@ const StudentStats = ({ students }) => {
       value: completedStudents,
       subtitle: "Finished Course",
       icon: (
-        <FaCheckCircle className="text-2xl text-green-400" />
+        <FaCheckCircle className="text-2xl bg-caribbeangreen-100" />
       ),
     },
 

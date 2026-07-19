@@ -85,4 +85,12 @@ export const sidebarLinks = [
   type: ACCOUNT_TYPE.ADMIN,
   icon: "VscAccount",
 },
+
+{
+  id: 13,
+  name: "Course Approval",
+  path: "/dashboard/course-approval",
+  type: ACCOUNT_TYPE.ADMIN,
+  icon: "VscVerified",
+},
 ]
