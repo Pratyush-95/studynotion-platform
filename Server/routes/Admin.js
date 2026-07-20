@@ -18,6 +18,8 @@ const {
   deleteActivity,
   markActivityAsRead,
   getInstructorStudents,
+  getApprovedCourses,
+  getRejectedCourses,
 } = require("../controllers/Admin");
 
 router.get(
@@ -116,4 +118,19 @@ router.get(
   isAdmin,
   getInstructorStudents
 );
+
+router.get(
+  "/approved-courses",
+  auth,
+  isAdmin,
+  getApprovedCourses
+);
+
+router.get(
+  "/rejected-courses",
+  auth,
+  isAdmin,
+  getRejectedCourses
+);
+
 module.exports = router;

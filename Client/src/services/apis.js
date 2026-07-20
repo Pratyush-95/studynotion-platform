@@ -190,4 +190,10 @@ export const adminCourseApprovalEndpoints = {
 
   REJECT_COURSE_API:
     BASE_URL + "/admin/courses",
+
+  GET_APPROVED_COURSES_API:
+    BASE_URL + "/admin/approved-courses",
+
+  GET_REJECTED_COURSES_API:
+    BASE_URL + "/admin/rejected-courses",
 };

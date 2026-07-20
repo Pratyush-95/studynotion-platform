@@ -6,6 +6,8 @@ import { getPendingCourses,  getDashboardStats, } from "../../../../services/ope
 import CourseStats from "./CourseStats";
 import CourseFilters from "./CourseFilters";
 import CourseCard from "./CourseCard";
+import ApprovedCoursesModal from "./ApprovedCoursesModal";
+import RejectedCoursesModal from "./RejectedCoursesModal";
 
 export default function CourseApprovalPage() {
 
@@ -13,6 +15,8 @@ export default function CourseApprovalPage() {
 
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
+  const [showApprovedModal, setShowApprovedModal] = useState(false);
+  const [showRejectedModal, setShowRejectedModal] = useState(false);
 
   const [stats, setStats] = useState({
   pendingCourses: 0,
@@ -81,24 +85,66 @@ export default function CourseApprovalPage() {
 
   return (
 
-    <div className="text-white p-6">
+  <>
 
-      <h1 className="text-3xl font-bold">
-        Course Approval
+    <div className="text-white px-6 pt-2 pb-6">
+
+     <div className="rounded-2xl border border-richblack-700 bg-richblack-900 p-7 shadow-lg">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+
+      <h1 className="text-3xl font-bold text-yellow-50">
+        📚 Course Approval
       </h1>
 
-      <p className="text-richblack-300 mt-2">
-        Review, approve and reject instructor submitted courses.
+      <p className="mt-4 text-lg text-richblack-300">
+        Review, approve and manage instructor submitted courses from one place.
       </p>
 
-      <CourseStats stats={stats} />
+    </div>
 
-      <CourseFilters
+    <div className="hidden lg:flex h-20 w-20 items-center justify-center rounded-full bg-yellow-500/10 text-5xl">
+      📖
+    </div>
+
+  </div>
+
+</div>
+
+  <div className="mt-5">
+    <CourseStats
+        stats={stats}
+        onApprovedClick={() => setShowApprovedModal(true)}
+        onRejectedClick={() => setShowRejectedModal(true)}
+    />
+</div>
+
+  <div className="mt-6 rounded-2xl border border-richblack-700 bg-richblack-900 p-5">
+    <CourseFilters
         search={search}
         setSearch={setSearch}
         filter={filter}
         setFilter={setFilter}
-      />
+    />
+  </div>
+
+  <div className="mt-10 flex items-center justify-between">
+
+    <div>
+
+        <h2 className="text-2xl font-bold text-richblack-5">
+            Pending Courses
+        </h2>
+
+        <p className="text-richblack-300 mt-1">
+            {filteredCourses.length} Course(s) waiting for approval
+        </p>
+
+    </div>
+
+</div>
 
       {
         loading ? (
@@ -109,16 +155,26 @@ export default function CourseApprovalPage() {
 
         ) : (
 
-          <div className="mt-8 flex flex-col gap-6">
+          <div className="mt-8 space-y-6">
 
             {
               filteredCourses.length === 0 ? (
 
-                <div className="text-center text-richblack-300">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-richblack-700 bg-richblack-900 py-16">
 
-                  No Courses Found
+    <div className="text-6xl">
+        📚
+    </div>
 
-                </div>
+    <h3 className="mt-6 text-2xl font-semibold text-richblack-5">
+        No Pending Courses
+    </h3>
+
+    <p className="mt-2 text-richblack-300">
+        Everything looks good. There are no courses waiting for review.
+    </p>
+
+</div>
 
               ) : (
 
@@ -141,7 +197,22 @@ export default function CourseApprovalPage() {
       }
 
     </div>
+    {
+  showApprovedModal && (
+    <ApprovedCoursesModal
+      onClose={() => setShowApprovedModal(false)}
+    />
+  )
+}
 
+{
+  showRejectedModal && (
+    <RejectedCoursesModal
+      onClose={() => setShowRejectedModal(false)}
+    />
+  )
+}
+   </>
   );
 
 }

@@ -9,6 +9,8 @@ const {
   GET_PENDING_COURSES_API,
   APPROVE_COURSE_API,
   REJECT_COURSE_API,
+  GET_APPROVED_COURSES_API,
+  GET_REJECTED_COURSES_API,
 } = adminCourseApprovalEndpoints;
 
 const {
@@ -143,6 +145,54 @@ export const getDashboardStats = async (token) => {
     result = response.data;
   } catch (error) {
     console.log(error);
+  }
+
+  return result;
+};
+
+
+export const getApprovedCourses = async (token) => {
+  let result = null;
+
+  try {
+    const response = await apiConnector(
+      "GET",
+      GET_APPROVED_COURSES_API,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    result = response.data;
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Unable to fetch approved courses");
+  }
+
+  return result;
+};
+
+
+export const getRejectedCourses = async (token) => {
+  let result = null;
+
+  try {
+    const response = await apiConnector(
+      "GET",
+      GET_REJECTED_COURSES_API,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    result = response.data;
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Unable to fetch rejected courses");
   }
 
   return result;

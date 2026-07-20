@@ -1091,3 +1091,51 @@ exports.getInstructorStudents = async (req, res) => {
     });
   }
 };
+
+
+exports.getApprovedCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({
+      status: "Published",
+    })
+      .populate("instructor", "firstName lastName email")
+      .populate("category", "name")
+      .sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      data: courses,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch approved courses",
+    });
+  }
+};
+
+
+exports.getRejectedCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({
+      status: "Rejected",
+    })
+      .populate("instructor", "firstName lastName email")
+      .populate("category", "name")
+      .sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      data: courses,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch rejected courses",
+    });
+  }
+};

@@ -64,27 +64,27 @@ export const sidebarLinks = [
   type: ACCOUNT_TYPE.ADMIN,
   icon: "VscDashboard",
 },
-{
-  id: 10,
-  name: "Pending Instructors",
-  path: "/dashboard/pending-instructors",
-  type: ACCOUNT_TYPE.ADMIN,
-  icon: "VscAccount",
-},
-{
-  id: 11,
-  name: "Approved Instructors",
-  path: "/dashboard/approved-instructors",
-  type: ACCOUNT_TYPE.ADMIN,
-  icon: "VscAccount",
-},
-{
-  id: 12,
-  name: "Rejected Instructors",
-  path: "/dashboard/rejected-instructors",
-  type: ACCOUNT_TYPE.ADMIN,
-  icon: "VscAccount",
-},
+// {
+//   id: 10,
+//   name: "Pending Instructors",
+//   path: "/dashboard/pending-instructors",
+//   type: ACCOUNT_TYPE.ADMIN,
+//   icon: "VscAccount",
+// },
+//  {
+//   id: 11,
+//   name: "Approved Instructors",
+//   path: "/dashboard/approved-instructors",
+//   type: ACCOUNT_TYPE.ADMIN,
+//   icon: "VscAccount",
+// },
+// {
+//   id: 12,
+//   name: "Rejected Instructors",
+//   path: "/dashboard/rejected-instructors",
+//   type: ACCOUNT_TYPE.ADMIN,
+//   icon: "VscAccount",
+// },
 
 {
   id: 13,
@@ -92,5 +92,13 @@ export const sidebarLinks = [
   path: "/dashboard/course-approval",
   type: ACCOUNT_TYPE.ADMIN,
   icon: "VscVerified",
+},
+
+{
+  id: 14,
+  name: "User Management",
+  path: "/dashboard/user-management",
+  type: ACCOUNT_TYPE.ADMIN,
+  icon: "VscOrganization",
 },
 ]

@@ -1,4 +1,4 @@
-export default function CourseStats({ stats }) {
+export default function CourseStats({ stats ,  onApprovedClick,   onRejectedClick,}) {
 
   // const pending = courses.filter(
   //   (course) => course.status === "Pending"
@@ -18,7 +18,9 @@ export default function CourseStats({ stats }) {
 
       {/* Pending */}
 
-      <div className="bg-richblack-800 border border-richblack-700 rounded-xl p-5">
+      <div className="bg-richblack-800 border border-richblack-700 rounded-xl p-5 cursor-pointer
+             hover:-translate-y-1 hover:shadow-xl
+             transition-all duration-300">
 
         <p className="text-richblack-300">
           Pending
@@ -32,7 +34,10 @@ export default function CourseStats({ stats }) {
 
       {/* Approved */}
 
-      <div className="bg-richblack-800 border border-richblack-700 rounded-xl p-5">
+      <div onClick={onApprovedClick} 
+      className="bg-richblack-800 border border-richblack-700 rounded-xl p-5 cursor-pointer
+             hover:-translate-y-1 hover:shadow-xl
+             transition-all duration-300">
 
         <p className="text-richblack-300">
           Approved
@@ -46,7 +51,11 @@ export default function CourseStats({ stats }) {
 
       {/* Rejected */}
 
-      <div className="bg-richblack-800 border border-richblack-700 rounded-xl p-5">
+      <div 
+        onClick={onRejectedClick}
+      className="bg-richblack-800 border border-richblack-700 rounded-xl p-5 cursor-pointer
+             hover:-translate-y-1 hover:shadow-xl
+             transition-all duration-300">
 
         <p className="text-richblack-300">
           Rejected
@@ -60,7 +69,9 @@ export default function CourseStats({ stats }) {
 
       {/* Total */}
 
-      <div className="bg-richblack-800 border border-richblack-700 rounded-xl p-5">
+      <div className="bg-richblack-800 border border-richblack-700 rounded-xl p-5
+                hover:-translate-y-1 hover:shadow-xl
+                transition-all duration-300">
 
         <p className="text-richblack-300">
           Total Courses
