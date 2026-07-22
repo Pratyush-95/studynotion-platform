@@ -167,6 +167,7 @@ exports.updateCoupon = async (req, res) => {
     const { couponId } = req.params;
 
     const {
+      code,
       description,
       discountType,
       discountValue,
@@ -216,6 +217,9 @@ exports.updateCoupon = async (req, res) => {
         message: "Expiry date should be future date",
       });
     }
+
+    coupon.code =
+      code?.toUpperCase() ?? coupon.code;
 
     coupon.description =
       description ?? coupon.description;
@@ -544,4 +548,41 @@ exports.applyCoupon = async (req, res) => {
 
   }
 
+};
+
+
+// ==========================================================
+// Get Active Coupon (Public)
+// ==========================================================
+
+exports.getActiveCoupon = async (req, res) => {
+  try {
+
+    const coupon = await Coupon.findOne({
+      isActive: true,
+      expiryDate: { $gt: new Date() },
+    }).sort({ createdAt: -1 });
+
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        message: "No active coupon found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: coupon,
+    });
+
+  } catch (error) {
+
+    console.log("GET_ACTIVE_COUPON_ERROR", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
 };

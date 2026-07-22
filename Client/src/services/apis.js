@@ -50,17 +50,22 @@ export const couponEndpoints = {
   GET_COUPONS_API:
     BASE_URL + "/coupon",
 
-  UPDATE_COUPON_API:
-    BASE_URL + "/coupon",
+  GET_ACTIVE_COUPON_API:
+    BASE_URL + "/coupon/active",
 
-  DELETE_COUPON_API:
-    BASE_URL + "/coupon",
+   UPDATE_COUPON_API: (couponId) =>
+    BASE_URL + `/coupon/${couponId}`,
+
+  DELETE_COUPON_API: (couponId) =>
+    BASE_URL + `/coupon/${couponId}`,
 
   VALIDATE_COUPON_API:
     BASE_URL + "/coupon/validate",
 
   APPLY_COUPON_API:
     BASE_URL + "/coupon/apply",
+
+  
 
 };
 

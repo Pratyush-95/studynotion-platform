@@ -210,9 +210,13 @@ exports.verifyPayment = async (req, res) => {
 // Increase Coupon Usage Count
 // =====================================
 
+// =====================================
+// Increase Coupon Usage Count
+// =====================================
+
 if (couponCode) {
 
-  await Coupon.findOneAndUpdate(
+  const updatedCoupon = await Coupon.findOneAndUpdate(
     {
       code: couponCode.toUpperCase(),
     },
@@ -220,9 +224,15 @@ if (couponCode) {
       $inc: {
         usedCount: 1,
       },
+    },
+    {
+      new: true,
     }
   );
 
+  if (!updatedCoupon) {
+    console.log("Coupon not found while updating usage.");
+  }
 }
    
     } catch (err) {

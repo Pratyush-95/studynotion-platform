@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import {
   FaUserCheck,
@@ -13,7 +14,7 @@ import { getApprovedInstructors } from "../../../../services/operations/adminAPI
 const ApprovedInstructors = () => {
 
   const { token } = useSelector((state) => state.auth);
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [instructors, setInstructors] = useState([]);
 
@@ -147,7 +148,9 @@ Approved
 </div>
 
 <button
-
+   onClick={() =>
+    navigate(`/dashboard/user-management/instructor/${user._id}`)
+  }
 className="rounded-lg bg-yellow-50 px-4 py-2 text-richblack-900 font-semibold hover:scale-105 duration-200"
 
 >

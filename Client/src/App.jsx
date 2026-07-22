@@ -49,6 +49,7 @@ import StudentProfilePage from "./components/core/Dashboard/AdminUserManagement/
 import PublishedCoursesPage from "./components/core/Dashboard/AdminUserManagement/PublishedCoursesPage";
 import InstructorStudentsPage from "./components/core/Dashboard/AdminUserManagement/InstructorStudentsPage";
 import CourseApprovalPage from "./components/core/Dashboard/AdminCourseApproval/CourseApprovalPage";
+import CouponPage from "./components/core/Dashboard/CouponManagement/CouponPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -163,6 +164,8 @@ function App() {
             <Route path="dashboard/rejected-instructors" element={<RejectedInstructors />} />
             <Route path="dashboard/user-management" element={<AdminUserManagement />} />
             <Route path="dashboard/course-approval" element={<CourseApprovalPage />}/>
+
+            <Route path="dashboard/coupon-management" element={<CouponPage />}/>
 
             <Route path="dashboard/user-management/instructor/:userId" element={<InstructorProfilePage />}/>
             <Route path="dashboard/admin/instructor/:userId/published-courses" element={<PublishedCoursesPage />}/>

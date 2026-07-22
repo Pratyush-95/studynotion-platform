@@ -8,5 +8,8 @@
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "lucide-react": "^1.25.0",
+    "react-datepicker": "^9.1.0"
+  }
 }

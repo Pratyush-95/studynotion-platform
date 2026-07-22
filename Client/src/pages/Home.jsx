@@ -14,12 +14,51 @@ import HighlightText from "../components/core/HomePage/HighlightText"
 import InstructorSection from "../components/core/HomePage/InstructorSection"
 import LearningLanguageSection from "../components/core/HomePage/LearningLanguageSection"
 import TimelineSection from "../components/core/HomePage/TimelineSection"
+import { useEffect, useState } from "react";
+import PromoBanner from "../components/common/PromoBanner";
+import { getActiveCoupon } from "../services/operations/couponAPI";
 
 function Home() {
+
+  const [coupon, setCoupon] = useState(null);
+  const [showBanner, setShowBanner] = useState(true);
+
+   const loadCoupon = async () => {
+     console.log("loadCoupon called");
+    const data = await getActiveCoupon();
+      console.log("data =", data);
+
+    if (data) {
+      setCoupon(data);
+    }
+  };
+
+  const handleCloseBanner = () => {
+    setShowBanner(false);
+    //localStorage.setItem("hidePromoBanner", "true");
+  };
+
+  useEffect(() => {
+    loadCoupon();
+
+    // const isHidden = localStorage.getItem("hidePromoBanner");
+
+    // if (isHidden === "true") {
+    //   setShowBanner(false);
+    // }
+  }, []);
+
   return (
     <div>
       {/* Section 1 */}
       <div className="relative mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 text-white">
+
+       {showBanner && coupon && (
+    <PromoBanner
+      coupon={coupon}
+      onClose={handleCloseBanner}
+    />
+  )}
         {/* Become a Instructor Button */}
         <Link to={"/signup"}>
           <div className="group mx-auto mt-16 w-fit rounded-full bg-richblack-800 p-1 font-bold text-richblack-200 drop-shadow-[0_1.5px_rgba(255,255,255,0.25)] transition-all duration-200 hover:scale-95 hover:drop-shadow-none">
@@ -30,11 +69,15 @@ function Home() {
           </div>
         </Link>
 
+
+
         {/* Heading */}
         <div className="text-center text-4xl font-semibold">
           Empower Your Future with
           <HighlightText text={"Coding Skills"} />
         </div>
+
+      
 
         {/* Sub Heading */}
         <div className="-mt-3 w-[90%] text-center text-lg font-bold text-richblack-300">

@@ -1,5 +1,6 @@
 import { ACCOUNT_TYPE } from "../utils/constants"
 
+
 export const sidebarLinks = [
   {
     id: 1,
@@ -100,5 +101,21 @@ export const sidebarLinks = [
   path: "/dashboard/user-management",
   type: ACCOUNT_TYPE.ADMIN,
   icon: "VscOrganization",
+},
+
+{
+  id: 15,
+  name: "Coupon Management",
+  path: "/dashboard/coupon-management",
+  type: ACCOUNT_TYPE.ADMIN,
+  icon: "VscGift",
+},
+
+{
+  id: 16,
+  name: "Notifications",
+  path: "/dashboard/all-activities",
+  type: ACCOUNT_TYPE.ADMIN,
+  icon: "VscBell",
 },
 ]

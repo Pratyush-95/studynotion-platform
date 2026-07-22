@@ -81,6 +81,22 @@ const sidebarLinks = [
   type: ACCOUNT_TYPE.ADMIN,
   icon: "VscOrganization",
 },
+
+{
+  id: 12,
+  name: "Coupon Management",
+  path: "/dashboard/coupon-management",
+  type: ACCOUNT_TYPE.ADMIN,
+  icon: "VscGift",
+},
+
+{
+  id: 16,
+  name: "Notifications",
+  path: "/dashboard/all-activities",
+  type: ACCOUNT_TYPE.ADMIN,
+  icon: "VscBell",
+},
 ];
 
 // module.exports = sidebarLinks
