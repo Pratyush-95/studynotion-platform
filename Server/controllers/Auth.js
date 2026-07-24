@@ -18,6 +18,14 @@ const {
   markSecurityEmailSent,
   clearSecurityEmailFlag,
 } = require("../utils/securityEmailLimiter");
+const {
+  checkOtpCooldown,
+  incrementOtpRequests,
+  checkHourlyLimit,
+  checkDailyLimit,
+  checkIpOtpLimit,
+  incrementIpOtpRequests,
+} = require("../utils/otpRateLimiter");
 const otpGenerator = require("otp-generator");
 const mailSender = require("../utils/mailSender");
 const securityAlertTemplate = require("../mail/templates/SecurityAlert");
@@ -378,6 +386,10 @@ exports.sendotp = async (req, res) => {
   try {
     const { email } = req.body;
    //  console.log("STEP 1", email);
+   const ip =
+  req.headers["x-forwarded-for"]?.split(",")[0] ||
+  req.socket.remoteAddress ||
+  req.ip;
 
     // Check if user exists
     const user = await User.findOne({ email });
@@ -388,33 +400,120 @@ exports.sendotp = async (req, res) => {
       });
     }
 
-    // / Prevent spam OTP (1 min wait)
-    const otpExists = await hasOTP(email);
-    if (otpExists) {
-       const ttl = await getTTL(email);
+    const cooldown = await checkOtpCooldown(email);
 
-    return res.status(400).json({
+if (cooldown.blocked) {
+
+  return res.status(400).json({
     success: false,
-    message: `Please wait ${ttl} seconds before requesting another OTP`,
+    message: `Please wait ${cooldown.ttl} seconds before requesting another OTP.`,
   });
 
 }
 
+   // ======================================================
+// Check Hourly OTP Limit
+// ======================================================
 
+const hourlyLimit = await checkHourlyLimit(email);
+
+if (hourlyLimit.blocked) {
+
+  const minutes = Math.floor(hourlyLimit.ttl / 60);
+  const seconds = hourlyLimit.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many OTP requests. Please try again after ${timeLeft}.`,
+  });
+
+
+}
+
+
+// ======================================================
+// Check Daily OTP Limit
+// ======================================================
+
+const dailyLimit = await checkDailyLimit(email);
+
+if (dailyLimit.blocked) {
+
+  const hours = Math.floor(dailyLimit.ttl / 3600);
+  const minutes = Math.floor((dailyLimit.ttl % 3600) / 60);
+
+  let timeLeft = "";
+
+  if (hours > 0) {
+    timeLeft += `${hours} hour${hours > 1 ? "s" : ""}`;
+  }
+
+  if (minutes > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message:
+      `Too many OTP requests today. Please try again after ${timeLeft}.`,
+  });
+}
+
+// ======================================================
+// Check IP OTP Limit
+// ======================================================
+
+const ipLimit = await checkIpOtpLimit(ip);
+
+if (ipLimit.blocked) {
+
+  const minutes = Math.floor(ipLimit.ttl / 60);
+  const seconds = ipLimit.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many OTP requests from this IP address. Please try again after ${timeLeft}.`,
+  });
+
+}
     // Generate numeric OTP
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
     });
-    console.log("Generated OTP:", otp);
+
 
     await saveOTP(email, otp);
-    console.log("STEP 4 OTP SAVED IN REDIS");
+    await incrementOtpRequests(email);
+    await incrementIpOtpRequests(ip);
 
     // 📩 Send email (IMPORTANT)
     await mailSender(email, "Verification Email", emailTemplate(otp));
-      console.log("STEP 7 EMAIL SENT");
+      
 
     return res.status(200).json({
       success: true,
