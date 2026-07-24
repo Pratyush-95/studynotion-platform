@@ -94,11 +94,12 @@ const cards = [
     color: "text-blue-400",
   },
   {
-    title: "Students",
-    value: stats?.totalStudents || 0,
-    icon: <FaUserGraduate />,
-    color: "text-green-400",
-  },
+  title: "Students",
+  value: stats?.totalStudents || 0,
+  icon: <FaUserGraduate />,
+  color: "text-green-400",
+  link: "/dashboard/students",
+},
   {
     title: "Instructors",
     value: stats?.totalInstructors || 0,
@@ -110,6 +111,7 @@ const cards = [
     value: stats?.totalCourses || 0,
     icon: <FaBookOpen />,
     color: "text-pink-400",
+    link: "/dashboard/courses-management",
   },
   {
     title: "Revenue",

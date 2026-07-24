@@ -8,6 +8,7 @@ const {
   changePassword,
   googleAuth,
   logout,
+  refreshToken,
 } = require("../controllers/Auth");
 const {
   resetPasswordToken,
@@ -29,6 +30,8 @@ router.post("/google", googleAuth);
 router.post("/reset-password-token", resetPasswordToken);
 
 router.post("/reset-password", resetPassword);
+
+router.post("/refresh-token", refreshToken);
 
 router.post(
   "/logout",

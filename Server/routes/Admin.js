@@ -20,6 +20,8 @@ const {
   getInstructorStudents,
   getApprovedCourses,
   getRejectedCourses,
+  getStudents,
+  getAdminCourses,
 } = require("../controllers/Admin");
 
 router.get(
@@ -131,6 +133,20 @@ router.get(
   auth,
   isAdmin,
   getRejectedCourses
+);
+
+router.get(
+  "/students",
+  auth,
+  isAdmin,
+  getStudents
+);
+
+router.get(
+  "/courses",
+  auth,
+  isAdmin,
+  getAdminCourses
 );
 
 module.exports = router;

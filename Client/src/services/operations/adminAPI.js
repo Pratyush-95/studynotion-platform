@@ -23,10 +23,14 @@ export const getDashboardStats = async (token) => {
     );
 
     result = response?.data?.data;
-  } catch (error) {
-    console.log(error);
+  } 
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
     toast.error("Failed to fetch dashboard stats");
   }
+}
 
   return result;
 };
@@ -45,10 +49,14 @@ export const getAdminDashboard = async (token) => {
     );
 
     result = response?.data?.data;
-  } catch (error) {
-    console.log(error);
+  } 
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
     toast.error("Failed to fetch admin dashboard data");
   }
+}
 
   return result;
 };
@@ -67,10 +75,15 @@ export const getPendingInstructors = async (token) => {
     );
 
     result = response?.data?.data;
-  } catch (error) {
-    console.log(error);
+  } 
+  
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
     toast.error("Failed to fetch pending instructors");
   }
+}
 
   return result;
 };
@@ -88,10 +101,14 @@ export const approveInstructor = async (token, instructorId) => {
 
     toast.success("Instructor Approved");
     return response.data;
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to approve instructor");
+  } 
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
+    toast.error("Failed to fetch approved instructors");
   }
+}
 };
 
 export const rejectInstructor = async (token, instructorId) => {
@@ -107,10 +124,14 @@ export const rejectInstructor = async (token, instructorId) => {
 
     toast.success("Instructor Rejected");
     return response.data;
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to reject instructor");
+  } 
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
+    toast.error("Failed to fetch rejected instructors");
   }
+}
 };
 
 export const getApprovedInstructors = async (token) => {
@@ -127,10 +148,13 @@ export const getApprovedInstructors = async (token) => {
     );
 
     result = response?.data?.data;
-  } catch (error) {
-    console.log(error);
+  }catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
     toast.error("Failed to fetch approved instructors");
   }
+}
 
   return result;
 };
@@ -173,10 +197,13 @@ export const getRecentActivities = async (token) => {
     );
 
     result = response?.data?.data;
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to fetch recent activities");
+  }catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
+    toast.error("Failed to fetch rejected instructors");
   }
+}
 
   return result;
 };
@@ -230,3 +257,57 @@ export async function markActivityAsRead(token, activityId) {
     return null;
   }
 }
+
+
+export const getStudents = async (token) => {
+  let result = [];
+
+  try {
+    const response = await apiConnector(
+      "GET",
+      `${BASE_URL}/admin/students`,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    result = response?.data?.data;
+  }
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
+    toast.error("Failed to fetch students");
+  }
+}
+
+  return result;
+};
+
+
+export const getAdminCourses = async (token) => {
+  let result = [];
+
+  try {
+    const response = await apiConnector(
+      "GET",
+      `${BASE_URL}/admin/courses`,
+      null,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    result = response?.data?.courses;
+  }
+  catch (error) {
+  console.log(error);
+
+  if (error?.response?.status !== 401) {
+    toast.error("Failed to fetch courses");
+  }
+}
+
+  return result;
+};

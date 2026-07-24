@@ -36,13 +36,15 @@ export const getPendingCourses = async (token) => {
 
     result = response.data;
   } catch (error) {
-    console.log(error);
+  console.log(error);
 
+  if (error?.response?.status !== 401) {
     toast.error(
       error?.response?.data?.message ||
         "Unable to fetch pending courses."
     );
   }
+}
 
   return result;
 };
@@ -166,10 +168,12 @@ export const getApprovedCourses = async (token) => {
 
     result = response.data;
   } catch (error) {
-    console.log(error);
+  console.log(error);
 
+  if (error?.response?.status !== 401) {
     toast.error("Unable to fetch approved courses");
   }
+}
 
   return result;
 };
@@ -189,11 +193,13 @@ export const getRejectedCourses = async (token) => {
     );
 
     result = response.data;
-  } catch (error) {
-    console.log(error);
+  }catch (error) {
+  console.log(error);
 
+  if (error?.response?.status !== 401) {
     toast.error("Unable to fetch rejected courses");
   }
+}
 
   return result;
 };

@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast";
 
-import { setLoading, setToken } from "../../slices/authSlice";
+import { setLoading ,setToken} from "../../slices/authSlice";
 import { resetCart } from "../../slices/cartSlice";
 import { setUser } from "../../slices/profileSlice";
 import { apiConnector } from "../apiconnector";
@@ -36,12 +36,12 @@ export function googleAuth(idToken, navigate, redirectTo = null, accountType = n
 
       toast.success("Login Successful");
 
-      dispatch(setToken(response.data.token));
+     dispatch(setToken(response.data.token));
 
       const userImage = `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
       dispatch(setUser({ ...response.data.user, image: userImage }));
 
-      localStorage.setItem("token", JSON.stringify(response.data.token));
+     localStorage.setItem("token", JSON.stringify(response.data.token));
       localStorage.setItem(
         "user",
         JSON.stringify({ ...response.data.user, image: userImage })
@@ -217,18 +217,9 @@ export function login(email, password, navigate,  redirectTo = null) {
 export function logout(navigate) {
   return async (dispatch, getState) => {
     dispatch(setLoading(true));
-    const token = getState().auth.token;
+   // const token = getState().auth.token;
     try {
-      if (token) {
-        await apiConnector(
-          "POST",
-          LOGOUT_API,
-          null,
-          {
-            Authorization: `Bearer ${token}`,
-          }
-        );
-      }
+       await apiConnector("POST", LOGOUT_API);
     } catch (error) {
       console.log("LOGOUT API ERROR............", error);
       // Still clear client state so the user is logged out locally.

@@ -1139,3 +1139,64 @@ exports.getRejectedCourses = async (req, res) => {
     });
   }
 };
+
+
+
+exports.getStudents = async (req, res) => {
+  try {
+    const students = await User.find({
+      accountType: "Student",
+    }).select("-password");
+
+    return res.status(200).json({
+      success: true,
+      count: students.length,
+      data: students,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+exports.getAdminCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({})
+      .populate("instructor", "firstName lastName email image")
+      .sort({ createdAt: -1 });
+
+    const data = courses.map((course) => ({
+      _id: course._id,
+      thumbnail: course.thumbnail,
+      courseName: course.courseName,
+
+      instructorName: `${course.instructor?.firstName || ""} ${
+        course.instructor?.lastName || ""
+      }`,
+
+      instructorEmail: course.instructor?.email,
+
+      createdAt: course.createdAt,
+
+      totalStudents: course.studentsEnroled?.length || 0,
+
+      status: course.status,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      totalCourses: data.length,
+      courses: data,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch courses",
+    });
+  }
+};

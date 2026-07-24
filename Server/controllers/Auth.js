@@ -2,13 +2,38 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 const jwt = require("jsonwebtoken");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateTokens");
+const {
+    saveOTP,
+    verifyOTP,
+    deleteOTP,
+    hasOTP,
+    getTTL,
+} = require("../utils/otpRedis");
+const {
+  isSecurityEmailSent,
+  markSecurityEmailSent,
+  clearSecurityEmailFlag,
+} = require("../utils/securityEmailLimiter");
 const otpGenerator = require("otp-generator");
 const mailSender = require("../utils/mailSender");
+const securityAlertTemplate = require("../mail/templates/SecurityAlert");
 const emailTemplate = require("../mail/templates/EmailVerification");
 const Profile = require("../models/Profile");
 const { OAuth2Client } = require('google-auth-library');
 require("dotenv").config();
 const {updateLoginActivity, updateLogoutActivity,}= require("../utils/loginActivity");
+const {
+  isLocked,
+  recordFailedAttempt,
+  resetLoginAttempts,
+  isIpLocked,
+  recordFailedIpAttempt,
+  resetIpAttempts,
+} = require("../utils/loginRateLimiter");
 
 const googleClient = new OAuth2Client();
 
@@ -79,36 +104,16 @@ exports.signup = async (req, res) => {
       }
     }
 
-    // Get latest OTP
-    const recentOtp = await OTP.find({ email })
-      .sort({ createdAt: -1 })
-      .limit(1);
+    const isMatch = await verifyOTP(email, otp);
 
-      if (!recentOtp.length) {
-          return res.status(400).json({
-          success: false,
-          message: "OTP expired",
-      });
+if (!isMatch) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid or Expired OTP",
+  });
 }
 
-    if (recentOtp[0].createdAt.getTime() < Date.now() - 5*60*1000) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP expired",
-      });
-    }
-
-    // Compare hashed OTP
-    const isMatch = await bcrypt.compare(otp, recentOtp[0].otp);
-
-    if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid OTP",
-      });
-    }
-
-    console.log("OTP Match Success");
+console.log("OTP Match Success");
     
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -140,7 +145,7 @@ exports.signup = async (req, res) => {
     console.log("User Created");
 
     // Delete OTP after success
-    await OTP.deleteMany({ email });
+    await deleteOTP(email);
 
     return res.status(200).json({
       success: true,
@@ -158,10 +163,14 @@ exports.signup = async (req, res) => {
 };
 
 
+
 // ================= LOGIN =================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress || req.ip;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -178,6 +187,64 @@ exports.login = async (req, res) => {
         message: "User not registered with Us Please Sign Up to Continue",
       });
     }
+
+
+    // ======================================================
+// Check if Account is Locked
+// ======================================================
+
+const lockStatus = await isLocked(email);
+
+if (lockStatus.locked) {
+
+  const minutes = Math.floor(lockStatus.ttl / 60);
+  const seconds = lockStatus.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) {
+      timeLeft += " ";
+    }
+
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many failed login attempts. Try again after ${timeLeft}.`,
+  });
+
+}
+
+
+const ipLockStatus = await isIpLocked(ip);
+
+if (ipLockStatus.locked) {
+  const minutes = Math.floor(ipLockStatus.ttl / 60);
+  const seconds = ipLockStatus.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many failed login attempts from this IP Address. Try again after ${timeLeft}.`,
+  });
+
+}
 
     // Compare password
     if (await bcrypt.compare(password, user.password)) {
@@ -196,37 +263,105 @@ if (!user.active) {
 
 }
 
+  await resetLoginAttempts(email);
+  await resetIpAttempts(ip);
+  await clearSecurityEmailFlag(email);
   await updateLoginActivity(user, req);
 
-      const token = jwt.sign(
-        { email: user.email, id: user._id, accountType : user.accountType },
-        process.env.JWT_SECRET,
-        { expiresIn: "24h" }
-      );
+    // Generate Tokens
+const accessToken = generateAccessToken(user);
+const refreshToken = generateRefreshToken(user);
 
-      user.token = token;
-      user.password = undefined;
+// Save Refresh Token in Database
+user.refreshToken = refreshToken;
+await user.save();
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure : process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge : 24*60*60*1000
-      })
+// Optional (abhi compatibility ke liye)
+user.token = accessToken;
 
-      return res.status(200).json({
-        success: true,
-        token,
-        user,
-        message: "Login successful",
-      });
+user.password = undefined;
 
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid password",
-      });
-    }
+// Access Token Cookie
+res.cookie("token", accessToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 15 * 60 * 1000, // 15 Minutes
+});
+
+// Refresh Token Cookie
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
+});
+
+return res.status(200).json({
+  success: true,
+  token: accessToken,
+  user,
+  message: "Login successful",
+});
+
+  } else {
+
+  const attempts = await recordFailedAttempt(email);
+  const ipAttempts = await recordFailedIpAttempt(ip);
+
+  // 10th attempt → Account Locked
+  if (attempts >= 10 || ipAttempts >= 10) {
+
+   try {
+
+  const alreadySent = await isSecurityEmailSent(email);
+
+  if (!alreadySent) {
+
+    await mailSender(
+      email,
+      "StudyNotion Security Alert",
+      securityAlertTemplate(
+        email,
+        ip,
+        new Date().toLocaleString(),
+        "10 minutes"
+      )
+    );
+
+    await markSecurityEmailSent(email);
+
+  }
+
+} catch (error) {
+
+  console.error("Failed to send security alert email:", error.message);
+
+}
+
+    return res.status(429).json({
+      success: false,
+      message:
+        "Too many failed login attempts. Your account has been locked for 10 minutes.",
+    });
+
+  }
+
+  // Warning after 6th attempt
+  if (attempts >= 6) {
+
+    return res.status(401).json({
+      success: false,
+      message: `Invalid password. Warning: ${attempts}/10 failed attempts.`,
+    });
+
+  }
+  return res.status(401).json({
+    success: false,
+    message: "Invalid password",
+  });
+
+}
 
   } catch (error) {
     console.error(error);
@@ -242,11 +377,10 @@ if (!user.active) {
 exports.sendotp = async (req, res) => {
   try {
     const { email } = req.body;
-     console.log("STEP 1", email);
+   //  console.log("STEP 1", email);
 
     // Check if user exists
     const user = await User.findOne({ email });
-     console.log("STEP 2");
     if (user) {
       return res.status(400).json({
         success: false,
@@ -255,16 +389,15 @@ exports.sendotp = async (req, res) => {
     }
 
     // / Prevent spam OTP (1 min wait)
-    const recentOtp = await OTP.findOne({email}).sort({createdAt : -1});
-    console.log("STEP 3");
+    const otpExists = await hasOTP(email);
+    if (otpExists) {
+       const ttl = await getTTL(email);
 
-    if (recentOtp && Date.now() - recentOtp.createdAt.getTime() < 60 * 1000) {
-        return res.status(400).json({
-        success: false,
-        message: "Please wait before requesting another OTP",
-    });
+    return res.status(400).json({
+    success: false,
+    message: `Please wait ${ttl} seconds before requesting another OTP`,
+  });
 
-    
 }
 
 
@@ -276,17 +409,8 @@ exports.sendotp = async (req, res) => {
     });
     console.log("Generated OTP:", otp);
 
-    // 🔐 Hash OTP
-    const hashedOTP = await bcrypt.hash(otp, 10);
-     console.log("STEP 4");
-    // Delete old OTPs
-    await OTP.deleteMany({ email });
-     console.log("STEP 5");
-
-
-    // Save hashed OTP
-    await OTP.create({ email, otp: hashedOTP });
-    console.log("STEP 6 OTP SAVED");
+    await saveOTP(email, otp);
+    console.log("STEP 4 OTP SAVED IN REDIS");
 
     // 📩 Send email (IMPORTANT)
     await mailSender(email, "Verification Email", emailTemplate(otp));
@@ -405,8 +529,66 @@ exports.googleAuth = async (req, res) => {
     const lastName = payload.family_name || payload.name?.split(' ').slice(1).join(' ') || 'User';
     const picture = payload.picture;
 
+    const ip =
+  req.headers["x-forwarded-for"]?.split(",")[0] ||
+  req.socket.remoteAddress ||
+  req.ip;
+
     // Find existing user
     let user = await User.findOne({ email }).populate('additionalDetails');
+
+    // Check Account Lock
+  // Check Account Lock
+const lockStatus = await isLocked(email);
+
+if (lockStatus.locked) {
+
+  const minutes = Math.floor(lockStatus.ttl / 60);
+  const seconds = lockStatus.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Your account is temporarily locked. Please try again after ${timeLeft}.`,
+  });
+
+}
+
+// Check IP Lock
+ const ipLockStatus = await isIpLocked(ip);
+
+if (ipLockStatus.locked) {
+
+  const minutes = Math.floor(ipLockStatus.ttl / 60);
+  const seconds = ipLockStatus.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `This IP address is temporarily blocked due to multiple failed login attempts. Please try again after ${timeLeft}.`,
+  });
+
+}
     // ======================================================
 // Check User Active Status
 // ======================================================
@@ -450,19 +632,44 @@ if (user && !user.active) {
       });
     }
 
+    await resetLoginAttempts(email);
+    await resetIpAttempts(ip);
+    await clearSecurityEmailFlag(email);
     await updateLoginActivity(user, req);
 
-    // Create JWT
-    const token = jwt.sign({ email: user.email, id: user._id, accountType: user.accountType }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    // Generate Tokens
+const accessToken = generateAccessToken(user);
+const refreshToken = generateRefreshToken(user);
 
-    user.token = token;
-    user.password = undefined;
+// Save Refresh Token
+user.refreshToken = refreshToken;
+user.token = accessToken;
 
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === "production", 
-      sameSite: "strict",
-      maxAge: 24*60*60*1000 });
+await user.save();
+user.password = undefined;
 
-    return res.status(200).json({ success: true, token, user, message: 'Google authentication successful' });
+// Access Token Cookie
+res.cookie("token", accessToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 15 * 60 * 1000,
+});
+
+// Refresh Token Cookie
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
+return res.status(200).json({
+  success: true,
+  token: accessToken,
+  user,
+  message: "Google authentication successful",
+});
 
   } catch (error) {
     console.error('Google Auth Error', error);
@@ -473,6 +680,68 @@ if (user && !user.active) {
     return res.status(400).json({ success: false, message, details });
   }
 }
+
+
+exports.refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh Token Missing",
+      });
+    }
+
+    // Verify Refresh Token
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET
+    );
+
+    // User Check
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Database Token Match
+    if (user.refreshToken !== refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Refresh Token",
+      });
+    }
+
+    // Generate New Access Token
+    const accessToken = generateAccessToken(user);
+
+    res.cookie("token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      token: accessToken,
+      message: "Access Token Refreshed",
+    });
+
+  } catch (error) {
+
+    return res.status(401).json({
+      success: false,
+      message: "Refresh Token Expired",
+    });
+
+  }
+};
 
 
 
@@ -490,9 +759,18 @@ exports.logout = async (req, res) => {
 
       await updateLogoutActivity(user);
 
+      user.refreshToken = null;
+      await user.save();
     }
 
     res.clearCookie("token", {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+});
+
+
+    res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

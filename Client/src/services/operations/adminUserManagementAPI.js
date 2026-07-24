@@ -40,15 +40,19 @@ export const searchUser = async (
     );
 
     result = response.data;
-  } catch (error) {
-    console.log(error);
-
-    if (showToast) {
-      toast.error(
-        error?.response?.data?.message || "Unable to search users."
-      );
-    }
   }
+  catch (error) {
+  console.log(error);
+
+  if (
+    showToast &&
+    error?.response?.status !== 401
+  ) {
+    toast.error(
+      error?.response?.data?.message || "Unable to search users."
+    );
+  }
+}
 
   if (toastId) {
     toast.dismiss(toastId);
@@ -77,13 +81,15 @@ export const viewUserProfile = async (token, userId) => {
     result = response.data;
     console.log("API Response:", response.data);
   } catch (error) {
-    console.log(error);
+  console.log(error);
 
+  if (error?.response?.status !== 401) {
     toast.error(
       error?.response?.data?.message ||
-        "Unable to fetch user profile."
+      "Unable to fetch user profile."
     );
   }
+}
 
   return result;
 };
@@ -270,19 +276,16 @@ export const getPublishedCourses = async (
 
   }
 
-  catch (error) {
+ catch (error) {
+  console.log(error);
 
-    console.log(error);
-
+  if (error?.response?.status !== 401) {
     toast.error(
-
       error?.response?.data?.message ||
-
       "Unable to fetch published courses."
-
     );
-
   }
+}
 
   return result;
 
@@ -321,15 +324,15 @@ export const getInstructorStudents = async (
   }
 
   catch (error) {
+  console.log(error);
 
-    console.log(error);
-
+  if (error?.response?.status !== 401) {
     toast.error(
       error?.response?.data?.message ||
       "Unable to fetch students."
     );
-
   }
+}
 
   return result;
 
@@ -355,13 +358,15 @@ export const getDashboardStats = async (token) => {
 
     result = response.data;
   } catch (error) {
-    console.log(error);
+  console.log(error);
 
+  if (error?.response?.status !== 401) {
     toast.error(
       error?.response?.data?.message ||
-        "Unable to fetch dashboard stats."
+      "Unable to fetch dashboard stats."
     );
   }
+}
 
   return result;
 };

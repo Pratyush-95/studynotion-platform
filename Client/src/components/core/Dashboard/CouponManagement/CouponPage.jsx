@@ -39,7 +39,9 @@ function CouponPage() {
 
     } catch (error) {
       console.log(error);
-      toast.error("Failed to load coupons");
+         if (error?.response?.status !== 401) {
+        toast.error("Failed to load coupons");
+    }
     } finally {
       setLoading(false);
     }

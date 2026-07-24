@@ -11,6 +11,7 @@ export const endpoints = {
   RESETPASSWORD_API: BASE_URL + "/auth/reset-password",
   GOOGLE_AUTH_API: BASE_URL + "/auth/google",
   LOGOUT_API: BASE_URL + "/auth/logout",
+  REFRESH_TOKEN_API: BASE_URL + "/auth/refresh-token",
 };
 
 // PROFILE ENDPOINTS
