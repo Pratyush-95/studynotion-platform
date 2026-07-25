@@ -2,17 +2,114 @@ const User = require("../models/User");
 const mailSender = require("../utils/mailSender")
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
+const {
+  checkResetCooldown,
+  checkHourlyLimit,
+  checkDailyLimit,
+  checkIpLimit,
+  incrementResetRequests,
+  incrementIpRequests,
+} = require("../utils/resetRateLimiter");
 
 exports.resetPasswordToken = async (req, res) => {
   try {
     const email = req.body.email
+    const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress ||
+    req.ip;
     const user = await User.findOne({ email: email })
+
     if (!user) {
       return res.status(400).json({
         success: false,
         message: `This Email: ${email} is not Registered With Us Enter a Valid Email `,
       })
     }
+
+    const cooldown = await checkResetCooldown(email);
+
+if (cooldown.blocked) {
+  return res.status(429).json({
+    success: false,
+    message: `Please wait ${cooldown.ttl} seconds before requesting another password reset email.`,
+  });
+}
+
+const hourlyLimit = await checkHourlyLimit(email);
+
+if (hourlyLimit.blocked) {
+
+  const minutes = Math.floor(hourlyLimit.ttl / 60);
+  const seconds = hourlyLimit.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many password reset requests. Please try again after ${timeLeft}.`,
+  });
+}
+
+const dailyLimit = await checkDailyLimit(email);
+
+if (dailyLimit.blocked) {
+
+  const hours = Math.floor(dailyLimit.ttl / 3600);
+  const minutes = Math.floor((dailyLimit.ttl % 3600) / 60);
+
+  let timeLeft = "";
+
+  if (hours > 0) {
+    timeLeft += `${hours} hour${hours > 1 ? "s" : ""}`;
+  }
+
+  if (minutes > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many password reset requests today. Please try again after ${timeLeft}.`,
+  });
+}
+
+const ipLimit = await checkIpLimit(ip);
+
+if (ipLimit.blocked) {
+
+  const minutes = Math.floor(ipLimit.ttl / 60);
+  const seconds = ipLimit.ttl % 60;
+
+  let timeLeft = "";
+
+  if (minutes > 0) {
+    timeLeft += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+
+  if (seconds > 0) {
+    if (timeLeft) timeLeft += " ";
+    timeLeft += `${seconds} second${seconds > 1 ? "s" : ""}`;
+  }
+
+  return res.status(429).json({
+    success: false,
+    message: `Too many password reset requests from this IP address. Please try again after ${timeLeft}.`,
+  });
+}
+
+
+
     const token = crypto.randomBytes(32).toString("hex")
 
     const updatedDetails = await User.findOneAndUpdate(
@@ -40,6 +137,9 @@ exports.resetPasswordToken = async (req, res) => {
       "Password Reset",
       `Your password reset link is ${url}. Please click this url to reset your password.`
     )
+
+    await incrementResetRequests(email);
+    await incrementIpRequests(ip);
 
     return res.json({
       success: true,

@@ -118,4 +118,21 @@ export const sidebarLinks = [
   type: ACCOUNT_TYPE.ADMIN,
   icon: "VscBell",
 },
+
+{
+  id: 17,
+  name: "Notifications",
+  path: "/dashboard/notifications",
+  icon: "VscBell",
+  type: ACCOUNT_TYPE.STUDENT,
+},
+
+{
+  id: 18,
+  name: "Notifications",
+  path: "/dashboard/notifications",
+  icon: "VscBell",
+  type: ACCOUNT_TYPE.INSTRUCTOR,
+},
 ]
+

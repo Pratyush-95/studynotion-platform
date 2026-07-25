@@ -50,7 +50,7 @@ exports.auth = async (req, res, next) => {
 
       req.user = decoded;
     } catch (error) {
-      console.log("JWT VERIFY ERROR:", error.message);
+     console.log(error.message);
 
       return res.status(401).json({
         success: false,

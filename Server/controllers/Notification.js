@@ -103,3 +103,87 @@ exports.markAllNotificationsRead =
       });
     }
   };
+
+
+  exports.getUnreadNotificationCount = async (req, res) => {
+  try {
+    const count = await Notification.countDocuments({
+      user: req.user.id,
+      isRead: false,
+    });
+
+    return res.status(200).json({
+      success: true,
+      unreadCount: count,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch unread count",
+    });
+  }
+};
+
+
+exports.deleteNotification = async (req, res) => {
+  try {
+
+    const { notificationId } = req.params;
+
+    if (!notificationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Notification ID is required",
+      });
+    }
+
+    const notification = await Notification.findOneAndDelete({
+      _id: notificationId,
+      user: req.user.id,
+    });
+
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: "Notification not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Notification deleted successfully",
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete notification",
+    });
+
+  }
+};
+
+
+exports.deleteAllNotifications = async (req, res) => {
+  try {
+
+    await Notification.deleteMany({
+      user: req.user.id,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "All notifications deleted successfully",
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete notifications",
+    });
+
+  }
+};

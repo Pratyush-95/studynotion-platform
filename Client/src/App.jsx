@@ -52,6 +52,7 @@ import CourseApprovalPage from "./components/core/Dashboard/AdminCourseApproval/
 import CouponPage from "./components/core/Dashboard/CouponManagement/CouponPage";
 import StudentProfile from "./components/core/Dashboard/AdminDashboard/StudentProfile";
 import CoursesPage from "./components/core/Dashboard/AdminCourseManagement/CoursesPage";
+import Notifications from "./components/core/Dashboard/Notifications/Notifications";
 
 
 function App() {
@@ -144,6 +145,10 @@ function App() {
                 path="dashboard/enrolled-courses"
                 element={<EnrolledCourses />}
               />
+              <Route
+              path="dashboard/notifications"
+              element={<Notifications />}
+              />
             </>
           )}
 
@@ -156,6 +161,9 @@ function App() {
                 path="dashboard/edit-course/:courseId"
                 element={<EditCourse />}
               />
+              <Route
+              path="dashboard/notifications"
+              element={<Notifications />}/>
             </>
           )}
 

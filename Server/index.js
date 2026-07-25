@@ -60,7 +60,7 @@ app.use(
 );
 
 app.use(
-  "/api/v1/notifications",
+  "/api/v1/notification",
   notificationRoutes
 );
 

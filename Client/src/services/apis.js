@@ -203,3 +203,31 @@ export const adminCourseApprovalEndpoints = {
   GET_REJECTED_COURSES_API:
     BASE_URL + "/admin/rejected-courses",
 };
+
+
+
+// ========================================
+// Notification
+// ========================================
+
+export const notificationEndpoints = {
+
+  GET_NOTIFICATIONS_API:
+    BASE_URL + "/notification/get-notifications",
+
+  MARK_NOTIFICATION_READ_API:
+    BASE_URL + "/notification/mark-read",
+
+  MARK_ALL_NOTIFICATIONS_READ_API:
+    BASE_URL + "/notification/mark-all-read",
+
+  GET_UNREAD_NOTIFICATION_COUNT_API:
+    BASE_URL + "/notification/unread-count",
+
+  DELETE_NOTIFICATION_API: (notificationId) =>
+    BASE_URL + `/notification/delete/${notificationId}`,
+
+  DELETE_ALL_NOTIFICATIONS_API:
+    BASE_URL + "/notification/delete-all",
+
+};
