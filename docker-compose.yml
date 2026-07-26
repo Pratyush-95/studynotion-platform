@@ -1,19 +1,23 @@
-
-
 services:
   backend:
     build:
       context: ./Server
     container_name: studynotion-backend
     restart: unless-stopped
+
     ports:
       - "5000:5000"
+
     env_file:
       - ./Server/.env
+
     environment:
       REDIS_URL: redis://redis:6379
+
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
+
     volumes:
       - ./Server:/app
       - /app/node_modules
@@ -23,12 +27,16 @@ services:
       context: ./Client
     container_name: studynotion-frontend
     restart: unless-stopped
+
     ports:
       - "5173:5173"
+
     env_file:
       - ./Client/.env
+
     depends_on:
       - backend
+
     volumes:
       - ./Client:/app
       - /app/node_modules
@@ -37,10 +45,19 @@ services:
     image: redis:7-alpine
     container_name: studynotion-redis
     restart: unless-stopped
+
     ports:
       - "6379:6379"
+
     volumes:
       - redis-data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
   redis-data:
