@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { FiUploadCloud } from "react-icons/fi"
-import { useSelector } from "react-redux"
+
 
 import ReactPlayer from "react-player"
 
@@ -15,13 +15,13 @@ export default function Upload({
   viewData = null,
   editData = null,
 }) {
-  const { course } = useSelector((state) => state.course)
+  
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewSource, setPreviewSource] = useState(
     viewData ? viewData : editData ? editData : ""
   )
   const objectUrlRef = useRef(null)
-  const inputRef = useRef(null)
+
 
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0]

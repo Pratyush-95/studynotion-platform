@@ -116,7 +116,7 @@ const VideoDetails = () => {
       const nextSubSectionId =
         courseSectionData[currentSectionIndx + 1].subSection[0]._id
       navigate(
- `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}${
+    `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}${
    isAdminPreview ? "?adminPreview=true" : ""
  }`
 )
@@ -220,8 +220,6 @@ const VideoDetails = () => {
     : null
 
   const playerSrc = proxyVideoUrl || resolvedVideoUrlWithFormat || resolvedVideoUrl
-
-  const videoDataKeys = videoData ? Object.keys(videoData).join(", ") : ""
   const shouldShowPreview = !videoData || !resolvedVideoUrl
 
   console.log("VideoDetails - videoData:", videoData)

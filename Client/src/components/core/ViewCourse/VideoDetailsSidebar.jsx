@@ -5,7 +5,7 @@ import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 
 import IconBtn from "../../common/IconBtn"
-import { ACCOUNT_TYPE } from "../../../utils/constants";
+
 
 export default function VideoDetailsSidebar({ setReviewModal }) {
   const [activeStatus, setActiveStatus] = useState("")
@@ -24,8 +24,6 @@ console.log("isAdminPreview =", isAdminPreview);
     totalNoOfLectures,
     completedLectures,
   } = useSelector((state) => state.viewCourse)
-  const { user } = useSelector((state) => state.profile);
-const isAdmin = user?.accountType === ACCOUNT_TYPE.ADMIN;
 
   useEffect(() => {
     ;(() => {

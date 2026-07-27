@@ -1,6 +1,6 @@
 import { formattedDate } from "../../../../utils/dateFormatter";
 import { useSelector } from "react-redux";
-import { useStatec } from "react";
+import { useState } from "react";
 import { approveCourse } from "../../../../services/operations/adminCourseApprovalAPI";
 import { useNavigate } from "react-router-dom";
 import RejectCourseModal from "./RejectCourseModal";

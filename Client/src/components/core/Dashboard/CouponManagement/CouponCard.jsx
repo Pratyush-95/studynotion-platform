@@ -8,7 +8,7 @@ function CouponCard({ coupon }) {
       toast.success(
         "Coupon copied! Go to your Cart and apply it before checkout."
       );
-    } catch (error) {
+    } catch{
       toast.error("Failed to copy coupon");
     }
   };

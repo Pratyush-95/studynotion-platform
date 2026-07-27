@@ -10,7 +10,7 @@ import { addToCart } from "../../../slices/cartSlice"
 import { ACCOUNT_TYPE } from "../../../utils/constants"
 
 
-function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse, isAdmin, }) {
+function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse}) {
   const { user } = useSelector((state) => state.profile)
   const { token } = useSelector((state) => state.auth)
   const navigate = useNavigate()
@@ -19,7 +19,6 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse, isAd
   const {
     thumbnail: ThumbnailImage,
     price: CurrentPrice,
-    _id: courseId,
   } = course
 
   const enrolledStudentIds =

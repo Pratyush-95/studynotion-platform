@@ -5,7 +5,7 @@ import SearchFilters from "./SearchFilters";
 import UserTable from "./UserTable";
 import Pagination from "./Pagination";
 import { useSelector } from "react-redux";
-import { searchUser, viewUserProfile, toggleUserStatus, sendNotification, deleteUser,} from "../../../../services/operations/adminUserManagementAPI";
+import { searchUser, toggleUserStatus, sendNotification, deleteUser,} from "../../../../services/operations/adminUserManagementAPI";
 import DeleteUserModal from "./DeleteUserModal";
 import NotificationModal from "./NotificationModal";
 import {
@@ -24,20 +24,12 @@ const AdminUserManagement = () => {
   // ======================================================
 
   const [users, setUsers] = useState([]);
-
   const [loading, setLoading] = useState(false);
-
-  const [initialLoading, setInitialLoading] = useState(true);
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const [role, setRole] = useState("all");
-
   const [page, setPage] = useState(1);
-
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [profileLoading, setProfileLoading] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -84,7 +76,6 @@ const newUsersToday = users.filter((user) => {
     setUsers([]);
     setTotalPages(1);
     setLoading(false);
-    setInitialLoading(false);
     return;
   }
 
@@ -108,29 +99,10 @@ const newUsersToday = users.filter((user) => {
   }
 
   setLoading(false);
-  setInitialLoading(false);
-};
-
-const handleViewProfile = async (userId) => {
-
-  setProfileLoading(true);
-
-  const response = await viewUserProfile(
-    token,
-    userId
-  );
-
-  if (response?.success) {
-
-    setSelectedUser(response.data);
-
-    setShowProfileModal(true);
-
-  }
-
-  setProfileLoading(false);
 
 };
+
+
 const handleToggleStatus = async (userId) => {
 
   const response = await toggleUserStatus(
@@ -395,8 +367,6 @@ speed and high-end controls.
           users={users}
           loading={loading}
           setSelectedUser={setSelectedUser}
-          setShowProfileModal={setShowProfileModal}
-          handleViewProfile={handleViewProfile}
           handleToggleStatus={handleToggleStatus}
           setShowNotificationModal={setShowNotificationModal}
           setShowDeleteModal={setShowDeleteModal}

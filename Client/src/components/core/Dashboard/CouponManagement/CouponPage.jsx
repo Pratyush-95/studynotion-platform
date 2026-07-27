@@ -170,7 +170,6 @@ const filteredCoupons = coupons.filter((coupon) => {
         <CouponTable 
           coupons={filteredCoupons}
           loading={loading}
-          fetchCoupons={fetchCoupons}
           setShowEditModal={setShowEditModal}
           setShowDeleteModal={setShowDeleteModal}
           setSelectedCoupon={setSelectedCoupon}

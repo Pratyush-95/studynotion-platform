@@ -12,7 +12,7 @@ export default function MyCourses() {
     try {
       const result = await fetchInstructorCourses(token)
       setCourses(result)
-    } catch (error) {
+    } catch{
       console.log("Could not fetch instructor courses.")
       setCourses([])
     }

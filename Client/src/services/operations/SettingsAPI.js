@@ -121,7 +121,7 @@ export function deleteProfile(token, navigate) {
 }
 
 export function requestAccountDeletion(token) {
-  return async (dispatch) => {
+  return async () => {
     const toastId = toast.loading("Scheduling account deletion...");
 
     try {

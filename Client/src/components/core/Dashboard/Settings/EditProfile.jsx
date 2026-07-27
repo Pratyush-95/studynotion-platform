@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
 
 import { auth, createRecaptcha } from "../../../../firebase"
-import { linkWithPhoneNumber, signInWithPhoneNumber, signOut } from "firebase/auth"
+import { signInWithPhoneNumber} from "firebase/auth"
 import { updateProfile } from "../../../../services/operations/SettingsAPI"
 import { getUserDetails } from "../../../../services/operations/profileAPI"
 import IconBtn from "../../../common/IconBtn"
@@ -32,7 +32,6 @@ export default function EditProfile() {
   const [isSendingOtp, setIsSendingOtp] = useState(false)
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [otpTimer, setOtpTimer] = useState(0)
-  const [isResendDisabled, setIsResendDisabled] = useState(false)
   const OTP_RESEND_SECONDS = 120 // set timer here (120 or 180 seconds)
 
   const {
@@ -81,7 +80,6 @@ export default function EditProfile() {
       setPhoneBeingVerified("")
       setConfirmationResult(null)
       setOtpTimer(0)
-      setIsResendDisabled(false)
     }
   }, [contactNumber, verifiedPhone])
 
@@ -105,9 +103,6 @@ export default function EditProfile() {
   };
 }, []);
 
-  useEffect(() => {
-    setIsResendDisabled(otpTimer > 0)
-  }, [otpTimer])
 
   const formatTimer = (seconds) => {
     const m = Math.floor(seconds / 60)
@@ -183,7 +178,6 @@ if (!checkResponse.data.success) {
     setOtp("");
     // start resend timer
     setOtpTimer(OTP_RESEND_SECONDS)
-    setIsResendDisabled(true)
 
     toast.success(`OTP sent to ${phone}`);
   } catch (error) {
@@ -215,7 +209,7 @@ if (!checkResponse.data.success) {
 
     setIsVerifyingOtp(true)
     try {
-      const { confirmation, isLinkingPhone } = confirmationResult
+      const { confirmation} = confirmationResult
 
       console.log("OTP =>", otp);
       console.log("confirmationResult =>", confirmationResult);
@@ -228,7 +222,6 @@ if (!checkResponse.data.success) {
       setConfirmationResult(null)
       // clear timer when verified
       setOtpTimer(0)
-      setIsResendDisabled(false)
       toast.success("Contact number verified successfully")
 
       // if (!isLinkingPhone) {

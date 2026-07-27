@@ -203,7 +203,7 @@ export function login(email, password, navigate,  redirectTo = null) {
 
            // return ;
           }
-        } catch (e) {
+        } catch{
           // ignore any parsing errors
         }
     }
@@ -215,9 +215,8 @@ export function login(email, password, navigate,  redirectTo = null) {
 
 // ✅ LOGOUT
 export function logout(navigate) {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     dispatch(setLoading(true));
-   // const token = getState().auth.token;
     try {
        await apiConnector("POST", LOGOUT_API);
     } catch (error) {

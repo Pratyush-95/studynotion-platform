@@ -1,7 +1,6 @@
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
-function CouponTable({ coupons,  loading,
-  fetchCoupons,setShowEditModal, setShowDeleteModal,setSelectedCoupon}) {
+function CouponTable({ coupons,  loading,setShowEditModal, setShowDeleteModal,setSelectedCoupon}) {
 
   if (loading) {
   return (
@@ -97,7 +96,7 @@ function CouponTable({ coupons,  loading,
                     <FiEdit2 size={20} />
                 </button>
 
-                <button className="text-pink-200 hover:scale-110 transition-all"
+                <button
 
                    onClick={() => {
                     setSelectedCoupon(coupon);

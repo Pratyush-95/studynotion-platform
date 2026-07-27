@@ -15,7 +15,6 @@ import {
 } from "react-icons/fi";
 import { useState, useRef, useEffect } from "react";
 import {FiTrash2, FiBookOpen,FiClipboard,FiCheck } from "react-icons/fi";
-import { useSelector } from "react-redux";
 import { deleteActivity } from "../../../../services/operations/adminAPI";
 import { toast } from "react-hot-toast";
 import { markActivityAsRead } from "../../../../services/operations/adminAPI";
@@ -147,6 +146,7 @@ const ActivityCard = ({ activity, token, onStatusChange }) => {
       toast.success("Marked as Read");
     }
   } catch (err) {
+    console.error(err);
     toast.error("Failed to update");
   }
 };

@@ -4,7 +4,7 @@ import { FaEllipsisH, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 
-const UserTable = ({ users, loading, setSelectedUser, setShowProfileModal, handleViewProfile, handleToggleStatus, setShowNotificationModal, setShowDeleteModal, }) => {
+const UserTable = ({ users, loading, setSelectedUser,handleToggleStatus, setShowNotificationModal, setShowDeleteModal, }) => {
 
   const [openMenu, setOpenMenu] = useState(null);
    const [menuPosition, setMenuPosition] = useState({

@@ -20,7 +20,7 @@ export default function EnrolledCourses() {
     console.log("Enrolled Courses Response:", res);
 
       setEnrolledCourses(res);
-    } catch (error) {
+    } catch {
       console.log("Could not fetch enrolled courses.")
     }
   };

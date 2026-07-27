@@ -10,7 +10,6 @@ import { toast } from "react-hot-toast";
 
 
 export default function RenderTotalAmount() {
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
   const { total, cart } = useSelector((state) => state.cart)
   const { token } = useSelector((state) => state.auth)
   const { user } = useSelector((state) => state.profile)
@@ -91,7 +90,6 @@ const handleRemoveCoupon = () => {
 
   const handleOpenPayment = () => {
     const courses = cart.map((course) => course._id)
-     const appliedCoupon = discount > 0 ? couponCode : "";
     if (token) {
       buyCourse(token, courses, user, navigate, dispatch,couponCode)
       return

@@ -35,26 +35,6 @@ ChartJS.register(
 );
 
 
-
-const quickActions = [
-  {
-    title: "Pending Instructors",
-    link: "/dashboard/pending-instructors",
-  },
-  {
-    title: "Approved Instructors",
-    link: "/dashboard/approved-instructors",
-  },
-  {
-    title: "Rejected Instructors",
-    link: "/dashboard/rejected-instructors",
-  },
-  {
-    title: "User Management",
-    link: "/dashboard/user-management",
-  },
-];
-
 const AdminPage = () => {
 
 const { token } = useSelector((state) => state.auth);

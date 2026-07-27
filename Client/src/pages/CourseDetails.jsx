@@ -40,7 +40,7 @@ function CourseDetails() {
         const res = await fetchCourseDetails(courseId)
         // console.log("course details res: ", res)
         setResponse(res)
-      } catch (error) {
+      } catch{
         console.log("Could not fetch Course Details")
       }
     })()

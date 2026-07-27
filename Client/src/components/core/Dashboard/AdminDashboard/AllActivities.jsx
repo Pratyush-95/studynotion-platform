@@ -21,8 +21,6 @@ const AllActivities = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
-  const [selectedActivity, setSelectedActivity] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
