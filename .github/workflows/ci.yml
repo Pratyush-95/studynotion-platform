@@ -10,7 +10,10 @@ on:
       - main
 
 jobs:
+
   backend-tests:
+
+    name: Backend Tests
 
     runs-on: ubuntu-latest
 
@@ -27,11 +30,42 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          # cache: npm
-          # cache-dependency-path: server/package-lock.json
+          cache: npm
+          cache-dependency-path: Server/package-lock.json
 
-      - name: Install Dependencies
+      - name: Install Backend Dependencies
         run: npm ci
 
-      - name: Run Jest Tests
+      - name: Run Backend Tests
         run: npm test
+
+  frontend-build:
+
+    name: Frontend Build
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Client
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Client/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build Frontend
+        run: npm run build
