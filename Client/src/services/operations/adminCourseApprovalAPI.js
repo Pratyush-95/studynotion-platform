@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast";
 
-import { apiConnector } from "../apiConnector";
+import { apiConnector } from "../apiconnector";
 
 import { adminCourseApprovalEndpoints } from "../apis";
 import { adminUserManagementEndpoints } from "../apis";

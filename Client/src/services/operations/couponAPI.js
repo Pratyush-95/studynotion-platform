@@ -1,4 +1,4 @@
-import { apiConnector } from "../apiConnector";
+import { apiConnector } from "../apiconnector";
 import { couponEndpoints } from "../apis";
 
 const {
