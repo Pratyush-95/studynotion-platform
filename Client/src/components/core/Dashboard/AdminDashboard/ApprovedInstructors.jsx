@@ -64,7 +64,7 @@ Loading...
 
 :
 
-<div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+<div className="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
 
 {
 
@@ -72,10 +72,10 @@ instructors.map((user)=>(
 
 <div
 key={user._id}
-className="rounded-xl border border-richblack-700 bg-richblack-900 p-6 hover:border-yellow-50 duration-300"
+className="w-full min-w-0 overflow-hidden rounded-xl border border-richblack-700 bg-richblack-900 p-6 transition-all duration-300 hover:border-yellow-50"
 >
 
-<div className="flex items-center gap-4">
+<div className="flex items-center gap-4 min-w-0">
 
 <img
 
@@ -87,15 +87,15 @@ className="h-16 w-16 rounded-full object-cover"
 
 />
 
-<div>
+<div className="flex-1 min-w-0">
 
-<h2 className="text-lg font-semibold text-richblack-5">
+<h2 className="text-lg font-semibold text-richblack-5  break-words">
 
 {user.firstName} {user.lastName}
 
 </h2>
 
-<p className="text-richblack-300">
+<p className="mt-1 text-sm text-richblack-300 break-all">
 
 {user.email}
 
@@ -107,11 +107,11 @@ className="h-16 w-16 rounded-full object-cover"
 
 <div className="mt-6 space-y-3">
 
-<div className="flex items-center gap-3 text-richblack-300">
+<div className="flex items-center gap-3 min-w-0  text-richblack-300">
 
 <FaEnvelope />
 
-<span>{user.email}</span>
+<span className="flex-1 min-w-0 break-all">{user.email}</span>
 
 </div>
 
@@ -139,7 +139,7 @@ Joined :
 
 </div>
 
-<div className="mt-6 flex items-center justify-between">
+<div className="mt-6 flex items-center justify-between gap-3">
 
 <div className="rounded-full bg-caribbeangreen-900 px-4 py-2 text-caribbeangreen-200">
 
